@@ -1,0 +1,161 @@
+image_path,class_name,label,split
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_026.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_031.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_034.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_010.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_021.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_001.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_026.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_021.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_005.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_024.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_013.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_030.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_004.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_006.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_010.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_009.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_016.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_021.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_028.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_010.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_006.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_016.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_036.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_005.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_006.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_024.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_035.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_027.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_034.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_029.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_030.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_037.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_035.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_009.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_020.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_023.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_001.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_032.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_033.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_033.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_018.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_022.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_037.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_034.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_011.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_032.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_008.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_018.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_011.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_039.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_018.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_004.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_035.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_012.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_017.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_038.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_025.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_005.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_026.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_006.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_016.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_039.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_012.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_002.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_027.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_007.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_019.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_000.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_029.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_011.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_031.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_036.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_038.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_014.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_017.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_016.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_031.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_009.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_008.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_009.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_001.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_028.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_004.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_037.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_000.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_029.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_008.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_002.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_015.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_037.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_039.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_019.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_002.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_033.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_015.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_031.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_003.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_030.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_019.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_015.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_012.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_007.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_005.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_011.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_003.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_000.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_028.jpg,Late Blight,2,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_030.jpg,Early Blight,1,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_014.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_032.jpg,Leaf Mold,3,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_036.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_012.jpg,Healthy,0,train
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_004.jpg,Leaf Mold,3,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_024.jpg,Late Blight,2,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_003.jpg,Healthy,0,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_022.jpg,Leaf Mold,3,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_039.jpg,Early Blight,1,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_033.jpg,Leaf Mold,3,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_022.jpg,Healthy,0,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_017.jpg,Early Blight,1,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_013.jpg,Late Blight,2,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_036.jpg,Leaf Mold,3,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_021.jpg,Leaf Mold,3,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_002.jpg,Leaf Mold,3,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_028.jpg,Healthy,0,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_010.jpg,Healthy,0,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_008.jpg,Early Blight,1,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_023.jpg,Late Blight,2,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_001.jpg,Early Blight,1,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_024.jpg,Early Blight,1,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_014.jpg,Late Blight,2,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_020.jpg,Healthy,0,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_027.jpg,Early Blight,1,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_020.jpg,Late Blight,2,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_027.jpg,Late Blight,2,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_035.jpg,Healthy,0,val
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_032.jpg,Healthy,0,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_018.jpg,Healthy,0,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_020.jpg,Early Blight,1,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_034.jpg,Leaf Mold,3,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_014.jpg,Healthy,0,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_017.jpg,Late Blight,2,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_025.jpg,Leaf Mold,3,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_007.jpg,Late Blight,2,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_013.jpg,Leaf Mold,3,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_038.jpg,Healthy,0,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_000.jpg,Leaf Mold,3,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_038.jpg,Early Blight,1,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_023.jpg,Leaf Mold,3,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_025.jpg,Early Blight,1,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Leaf_mold\sample_Tomato___Leaf_mold_026.jpg,Leaf Mold,3,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_003.jpg,Early Blight,1,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_029.jpg,Late Blight,2,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_015.jpg,Late Blight,2,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_025.jpg,Late Blight,2,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_007.jpg,Healthy,0,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_013.jpg,Early Blight,1,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___healthy\sample_Tomato___healthy_023.jpg,Healthy,0,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Early_blight\sample_Tomato___Early_blight_019.jpg,Early Blight,1,test
+C:\Users\palak\ai-crop-disease-pest-intelligence\data\raw\Tomato___Late_blight\sample_Tomato___Late_blight_022.jpg,Late Blight,2,test
