@@ -1,33 +1,57 @@
 # AI-Based Crop Disease & Pest Intelligence Platform
 
-An end-to-end, reproducible deep learning solution for crop disease detection, contextual severity estimation, and weather-aware risk assessment. Phase 3 extends Phase 1/2 with a **Contextual Crop-Health Intelligence** layer.
+An end-to-end, modular deep learning and agronomic intelligence solution for crop disease classification, pest detection, contextual severity estimation, weather-aware risk assessment, structured agricultural recommendations, and real-time risk alerts.
 
 ---
 
-## 🌟 Architecture Overview
+## 🌟 Unified Intelligence Architecture
 
 ```
-Upload Image
-     ↓
-Preprocessing (Transforms & Normalization)
-     ↓
-Disease Model (MobileNetV2 Transfer Learning)
-     ↓                         ↓                       ↓ [Optional]
-Prediction Engine      Severity Estimator       Weather Service
-(Class + Confidence)   (Colour Segmentation)    (OpenWeatherMap)
-     ↓                         ↓                       ↓
-Agricultural KB         [PROTOTYPE]              Temperature
-(Symptoms, Practices)   severity level           Humidity / Rainfall
-     ↓                         ↓                       ↓
-                    ┌──────────────────────────────────┐
-                    │         Risk Engine               │
-                    │  (Heuristic Scoring) [PROTOTYPE]  │
-                    └────────────────┬─────────────────┘
-                                     ↓
-                    Farmer-Friendly Application (Streamlit / FastAPI)
+                                 Uploaded Leaf Image
+                                          │
+                  ┌───────────────────────┼───────────────────────┐
+                  ▼                       ▼                       ▼
+       ┌──────────────────────┐┌──────────────────────┐┌──────────────────────┐
+       │ Disease Classifier   ││ Severity Estimator   ││ Pest Detection (YOLO)│
+       │ (MobileNetV2 CNN)    ││ (HSV Segmentation)   ││ [CONFIG REQUIRED]    │
+       │ → disease + conf     ││ [PROTOTYPE]          ││ → pest + bbox + conf │
+       └──────────┬───────────┘└──────────┬───────────┘└──────────┬───────────┘
+                  │                       │                       │
+                  └──────────────┬────────┘                       │
+                                 ▼                                │
+                      ┌──────────────────────┐                    │
+                      │ Disease KB           │                    │
+                      │ (Symptoms, Causes)   │                    │
+                      └──────────┬───────────┘                    │
+                                 │                                │
+                                 ▼                                │
+                      ┌──────────────────────┐                    │
+                      │ Weather Service      │                    │
+                      │ (OpenWeatherMap API) │                    │
+                      │ [OPTIONAL]           │                    │
+                      └──────────┬───────────┘                    │
+                                 │                                │
+                                 ▼                                │
+                      ┌──────────────────────┐                    │
+                      │ Risk Engine          │                    │
+                      │ (Heuristic Scoring)  │                    │
+                      │ [PROTOTYPE]          │                    │
+                      └──────────┬───────────┘                    │
+                                 │                                │
+                  ┌──────────────┴────────────────────────────────┘
+                  ▼
+       ┌──────────────────────────────────────────────────────────────┐
+       │ Recommendation Engine (IPM, Cultural, Non-chemical Guidelines)│
+       └──────────────────────────────┬───────────────────────────────┘
+                                      ▼
+       ┌──────────────────────────────────────────────────────────────┐
+       │ Alert Engine (High/Critical Real-Time Risk Notification)     │
+       └──────────────────────────────┬───────────────────────────────┘
+                                      ▼
+                      Unified Crop Health Report
 ```
 
-> ⚗️ **Prototype Notice**: Severity and risk components use heuristic algorithms not validated against agricultural field data. All outputs carry explicit disclaimers. See [docs/api.md](docs/api.md) for methodology details.
+> ⚗️ **Prototype & Validation Notice**: Severity estimation and risk engine scoring are heuristic decision-support prototypes and are not scientifically calibrated on formal field-trial epidemiology datasets. Outputs carry explicit disclaimers.
 
 ---
 
@@ -37,40 +61,53 @@ Agricultural KB         [PROTOTYPE]              Temperature
 ai-crop-disease-pest-intelligence/
 ├── api/
 │   ├── __init__.py
-│   └── main.py                        # FastAPI REST API v0.2.0
+│   └── main.py                        # Unified FastAPI REST API v0.3.0
 ├── app/
 │   └── streamlit_app.py               # Streamlit Farmer Interface
 ├── src/
+│   ├── models/
+│   │   ├── classifier.py              # MobileNetV2 disease model
+│   │   └── pest_detection/            # YOLOv8 pest detection wrapper
+│   │       ├── __init__.py
+│   │       └── weights/               # (Place pest_yolov8.pt here)
+│   ├── inference/
+│   │   ├── pipeline.py                # Disease inference pipeline
+│   │   └── pest/                      # Pest inference pipeline
+│   │       ├── __init__.py
+│   │       └── pipeline.py
 │   ├── severity/
 │   │   ├── __init__.py
-│   │   └── estimator.py               # Prototype severity estimation
+│   │   └── estimator.py               # Prototype HSV colour segmentation
 │   ├── weather/
 │   │   ├── __init__.py
-│   │   └── service.py                 # Weather service (env-var key)
+│   │   └── service.py                 # OpenWeatherMap integration
 │   ├── risk_engine/
 │   │   ├── __init__.py
-│   │   ├── engine.py                  # Modular risk scorer
-│   │   └── disease_risk_profiles.py   # Disease environmental bands
-│   ├── inference/
-│   │   └── pipeline.py                # MobileNetV2 inference engine
+│   │   ├── engine.py                  # Contextual risk scorer
+│   │   └── disease_risk_profiles.py   # Environmental risk profiles
+│   ├── recommendations/
+│   │   ├── __init__.py
+│   │   └── recommendation_engine.py   # Structured IPM recommendation engine
+│   ├── alerts/
+│   │   ├── __init__.py
+│   │   └── engine.py                  # Real-time risk alert engine
 │   ├── knowledge/
-│   │   └── disease_kb.py              # Agricultural knowledge base
-│   ├── preprocessing/                 # Image transforms, dataset loaders
-│   ├── models/                        # Classifier definitions
-│   ├── training/                      # Training loop
-│   ├── evaluation/                    # Metrics, confusion matrix
-│   └── utils/                         # Config, seed, dataset generator
+│   │   └── disease_kb.py              # Agricultural disease knowledge base
+│   ├── preprocessing/                 # Transforms and data loaders
+│   ├── training/                      # Model training routines
+│   ├── evaluation/                    # Evaluation & confusion matrix
+│   └── utils/                         # Config & dataset utilities
 ├── tests/
-│   ├── test_severity.py               # Severity unit tests (NEW)
-│   ├── test_weather.py                # Weather service tests (NEW)
-│   ├── test_risk_engine.py            # Risk engine tests (NEW)
-│   ├── test_api.py                    # FastAPI integration tests (UPDATED)
-│   ├── test_inference.py
-│   └── test_knowledge.py
-├── docs/
-│   ├── architecture.md                # Full system architecture
-│   ├── model.md                       # Model card
-│   └── api.md                         # API reference
+│   ├── test_pest_detection.py         # Pest detection tests (NEW)
+│   ├── test_recommendations.py        # Recommendation engine tests (NEW)
+│   ├── test_alerts.py                 # Alert engine tests (NEW)
+│   ├── test_api.py                    # Unified API tests (UPDATED)
+│   ├── test_severity.py               # Severity unit tests
+│   ├── test_weather.py                # Weather service unit tests
+│   ├── test_risk_engine.py            # Risk engine unit tests
+│   ├── test_inference.py              # Disease inference tests
+│   └── test_knowledge.py              # Knowledge base tests
+├── docs/                              # System documentation
 ├── .env.example                       # Environment variable template
 ├── requirements.txt
 └── README.md
@@ -78,7 +115,21 @@ ai-crop-disease-pest-intelligence/
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Component Status & Readiness
+
+| Subsystem | Status | Description |
+|-----------|--------|-------------|
+| **Disease Classification** | **IMPLEMENTED** | MobileNetV2 trained on 4 classes (Healthy, Early Blight, Late Blight, Leaf Mold). |
+| **Severity Estimation** | **IMPLEMENTED (Prototype)** | OpenCV HSV colour-space segmentation with heuristic category mapping. |
+| **Weather Context** | **IMPLEMENTED (Optional)** | OpenWeatherMap API integration. Graceful fallback if unconfigured. |
+| **Risk Engine** | **IMPLEMENTED (Prototype)** | Multi-factor weighted contextual risk index (0.0 to 1.0). |
+| **Pest Detection** | **CONFIGURATION REQUIRED** | Pipeline & detector architecture fully implemented; requires placing trained `pest_yolov8.pt` weights in `src/models/pest_detection/weights/`. Gracefully returns empty list if weights are missing. |
+| **Recommendation Engine** | **IMPLEMENTED** | Rule-based, source-attributed IPM guidance without unsafe chemical dosages. |
+| **Alert Engine** | **IMPLEMENTED** | Automated alert payload generator for High and Critical risk levels. |
+
+---
+
+## ⚡ Quick Start
 
 ### 1. Installation
 
@@ -95,120 +146,119 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Environment Configuration
+### 2. Environment Configuration (Optional)
 
 ```bash
-# Copy the template and fill in your API key (optional — app works without it)
 copy .env.example .env
 ```
 
 Edit `.env`:
 ```env
+# Optional: Weather integration
 OPENWEATHER_API_KEY=your_openweathermap_api_key_here
+
+# Optional: Custom path to trained YOLOv8 pest model weights
+PEST_MODEL_PATH=src/models/pest_detection/weights/pest_yolov8.pt
 ```
 
-> The weather API key is **optional**. Without it, the platform runs in image-only mode (disease + severity + risk from image only, no weather context).  
-> Get a free key at [openweathermap.org/api](https://openweathermap.org/api).
-
-### 3. Dataset Setup & Training (Optional)
-
-```bash
-# Generate sample dataset if PlantVillage data is not available
-python -m src.utils.download_dataset
-
-# Train model
-python train.py --epochs 10 --batch_size 32
-
-# Evaluate
-python evaluate.py
-```
-
----
-
-## ⚡ Starting the Services
-
-### FastAPI REST API
+### 3. Start the Unified API
 
 ```bash
 uvicorn api.main:app --reload --port 8000
 ```
 
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
-
-### Streamlit Farmer Web App
-
-```bash
-streamlit run app/streamlit_app.py
-```
-
-- Web App: `http://localhost:8501`
+- **Interactive API Docs (Swagger)**: `http://localhost:8000/docs`
+- **Alternative Docs (ReDoc)**: `http://localhost:8000/redoc`
 
 ---
 
-## 📡 API Reference
+## 📡 Unified API Response Example
 
-See [docs/api.md](docs/api.md) for the full reference. Quick examples:
-
-### Health Check
-
-```bash
-curl http://localhost:8000/health
-```
-
-```json
-{
-  "status": "healthy",
-  "crop": "Tomato",
-  "model_loaded": true,
-  "version": "0.2.0",
-  "weather_configured": false
-}
-```
-
-### Predict (image-only)
-
-```bash
-curl -X POST "http://localhost:8000/predict" \
-     -F "file=@leaf_sample.jpg"
-```
-
-### Predict (with weather + growth stage)
-
-```bash
-curl -X POST "http://localhost:8000/predict?city=Mumbai&growth_stage=flowering" \
-     -F "file=@leaf_sample.jpg"
-```
-
-### Example Response (condensed)
+### `POST /predict?city=Mumbai&growth_stage=flowering`
 
 ```json
 {
   "crop": "Tomato",
-  "disease": "Early Blight",
-  "confidence": 0.9142,
-  "scientific_name": "Alternaria solani",
+  "disease": {
+    "name": "Early Blight",
+    "confidence": 0.9142,
+    "class_probabilities": {
+      "Healthy": 0.0125,
+      "Early Blight": 0.9142,
+      "Late Blight": 0.0511,
+      "Leaf Mold": 0.0222
+    },
+    "scientific_name": "Alternaria solani",
+    "symptoms": ["Dark brown to black spots with concentric rings on lower leaves..."],
+    "general_causes": ["Fungal pathogen Alternaria solani..."],
+    "favorable_conditions": ["Warm temperatures (24-29°C), high humidity (>80%)..."],
+    "general_preventive_information": ["Avoid overhead irrigation", "Practice crop rotation..."],
+    "disclaimer": "NOTICE: This system provides informational guidance..."
+  },
   "severity": {
-    "severity": "Moderate",
+    "level": "Moderate",
     "affected_area_percentage": 18.5,
     "estimation_method": "opencv_hsv_colour_segmentation",
-    "prototype_disclaimer": "PROTOTYPE: ..."
+    "prototype_disclaimer": "PROTOTYPE: Severity is a heuristic estimate..."
   },
+  "pests": [
+    {
+      "pest": "Aphid",
+      "confidence": 0.9234,
+      "bounding_box": [12, 14, 80, 85]
+    }
+  ],
   "weather": {
     "weather_available": true,
     "location_name": "Mumbai",
-    "temperature_c": 31.2,
-    "humidity_pct": 88,
-    "rainfall_mm": 4.5,
+    "country": "IN",
+    "temperature_c": 28.5,
+    "humidity_pct": 86,
+    "rainfall_mm": 4.2,
     "condition": "Rain"
   },
   "risk": {
     "risk_level": "High",
-    "risk_score": 0.71,
+    "risk_score": 0.74,
     "factors": [
-      "Disease detected: Early Blight",
-      "High humidity: 88%",
-      "Recent rainfall: 4.5 mm",
+      "Disease detected: Early Blight (base risk index: 0.50)",
+      "Model confidence: 91.4%",
+      "Moderate affected area: ~18.5%",
+      "High humidity: 86%",
+      "Recent rainfall: 4.2 mm",
+      "Vulnerable growth stage: flowering"
+    ]
+  },
+  "recommendations": [
+    {
+      "category": "Sanitation",
+      "message": "Prune and safely discard lower infected leaves showing concentric lesions to reduce fungal inoculum.",
+      "source": "University Agricultural Extension IPM Guidelines"
+    },
+    {
+      "category": "Biological Control",
+      "message": "Encourage natural predators such as lady beetles and hoverfly larvae for aphid suppression.",
+      "source": "FAO Tomato Integrated Pest Management"
+    },
+    {
+      "category": "Humidity Management",
+      "message": "Elevated humidity (86%): Increase ventilation in covered structures to minimize spore transmission.",
+      "source": "University Agricultural Extension IPM Guidelines"
+    },
+    {
+      "category": "Urgent Action",
+      "message": "Elevated crop health risk: Prioritize immediate scouting and seek qualified professional agronomic advice.",
+      "source": "National Agricultural Extension Service"
+    }
+  ],
+  "alert": {
+    "active": true,
+    "severity": "High",
+    "title": "High Crop Health Alert",
+    "reasons": [
+      "Disease detected: Early Blight (base risk index: 0.50)",
+      "High humidity: 86%",
+      "Recent rainfall: 4.2 mm",
       "Vulnerable growth stage: flowering"
     ]
   }
@@ -217,65 +267,38 @@ curl -X POST "http://localhost:8000/predict?city=Mumbai&growth_stage=flowering" 
 
 ---
 
-## 🧪 Automated Testing
+## 🧪 Testing
+
+Run the full automated test suite (97 tests):
 
 ```bash
-# Run all tests
 pytest tests/ -v
+```
 
-# Run only new Phase 3 tests
-pytest tests/test_severity.py tests/test_weather.py tests/test_risk_engine.py -v
+Run specific test modules:
 
-# Run with coverage
-pytest tests/ --cov=src --cov-report=term-missing
+```bash
+# Pest detection tests
+pytest tests/test_pest_detection.py -v
+
+# Recommendation engine tests
+pytest tests/test_recommendations.py -v
+
+# Alert engine tests
+pytest tests/test_alerts.py -v
+
+# API integration tests
+pytest tests/test_api.py -v
 ```
 
 ---
 
-## ⚠️ Severity Methodology
+## ⚠️ Current Scope & Limitations
 
-The severity estimator uses **OpenCV HSV colour-space pixel analysis**:
-
-1. Convert image to HSV colour space.
-2. Build separate masks for healthy green pixels and disease-indicator pixels (brown/yellow/dark spots).
-3. `affected_area_percentage = disease_pixels / total_leaf_pixels × 100`
-4. Map to category: Low (< 10%), Moderate (10–30%), High (≥ 30%)
-
-> ⚠️ **Prototype**: Thresholds are heuristic estimates — not validated against Horsfall-Barratt scales or field data.
-
----
-
-## ⚠️ Risk Engine Methodology
-
-The risk engine combines 6 factors into a weighted composite score:
-
-| Factor | Weight | Source |
-|--------|--------|--------|
-| Base disease risk | 25% | Disease risk profiles |
-| Model confidence | 15% | ML classifier |
-| Severity | 25% | Heuristic estimator |
-| Humidity | 15% | Weather API |
-| Temperature | 10% | Weather API |
-| Rainfall | 10% | Weather API |
-
-Growth stage multiplier applied after weighted sum.
-
-> ⚠️ **Prototype**: All weights require calibration. Outputs are contextual estimates, not epidemiological forecasts.
-
----
-
-## ⚠️ Current Limitations
-
-1. **Single crop**: Restricted to Tomato (*Solanum lycopersicum*).
-2. **4 disease classes**: Healthy, Early Blight, Late Blight, Leaf Mold.
-3. **Severity** is a heuristic prototype — performance varies with image quality/lighting.
-4. **Risk engine** weights are not scientifically calibrated.
-5. **Weather context** requires an OpenWeatherMap API key.
-
-### Excluded from this phase:
-- Pest detection (planned Phase 4)
-- Multi-crop support (planned Phase 5)
-- Automated alert systems
+1. **Pest Model Weights**: The pest detection architecture is implemented and unit-tested with mocks and graceful fallbacks. Actual pest inference on real images requires downloading or training YOLOv8 weights (`pest_yolov8.pt`).
+2. **Prototype Estimates**: Severity percentages and risk scores are heuristic indices designed to demonstrate contextual intelligence workflows, not certified agronomic diagnostics.
+3. **Chemical Safety**: The recommendation engine strictly limits advice to non-chemical IPM, cultural, biological, and sanitation measures; pesticide prescriptions require certified local extension consultation.
+4. **Single-Crop Focus**: Currently focused on Tomato (*Solanum lycopersicum*).
 
 ---
 
