@@ -121,8 +121,36 @@ DISEASE_KNOWLEDGE_BASE: Dict[str, Dict[str, Any]] = {
             "Sanitize greenhouse structures, stakes, and tools between growing cycles.",
             "Apply suitable bio-fungicides or recommended protective sprays upon early diagnosis."
         ]
+    },
+    "Unclassified/Other Fungal Leaf Spot": {
+        "disease_name": "Unclassified/Other Fungal Leaf Spot",
+        "crop": "General Crops",
+        "scientific_name": "Foliar pathogen (unspecified / uncertain crop)",
+        "symptoms": [
+            "Foliar discoloration, necrotic lesions, chlorotic halos, or leaf spotting.",
+            "Symptoms vary widely across different host plant families and ambient humidity levels.",
+            "Premature yellowing or localized leaf tissue senescence."
+        ],
+        "general_causes": [
+            "Foliar fungal or bacterial pathogens thriving under high humidity, poor air circulation, or leaf wetness."
+        ],
+        "favorable_conditions": [
+            "Prolonged leaf surface moisture, overhead watering, high humidity, and poor canopy aeration."
+        ],
+        "preventive_measures": [
+            "Ensure proper plant and row spacing to optimize sunlight penetration and canopy airflow.",
+            "Avoid overhead irrigation; water directly at the base early in the day.",
+            "Sanitize pruning tools between plants to limit mechanical pathogen transmission.",
+            "Practice multi-year crop rotation with unrelated plant families."
+        ],
+        "general_management_practices": [
+            "Remove and safely discard severely spotted or dead leaves.",
+            "Maintain soil drainage and avoid working in fields when foliage is wet.",
+            "Consult local extension specialists for crop-specific diagnostic verification."
+        ]
     }
 }
+
 
 class DiseaseKnowledgeBase:
     """
@@ -138,12 +166,23 @@ class DiseaseKnowledgeBase:
         Retrieves detailed structured knowledge for a given disease.
         
         Args:
-            disease_name (str): Standardized disease class name.
+            disease_name (str): Standardized disease class name or uncertain label.
             
         Returns:
             Dict containing symptoms, causes, favorable conditions, preventive measures,
             management practices, and the professional disclaimer.
         """
+        # Map uncertain / mismatch labels to general unclassified entry
+        if disease_name.startswith("Uncertain") or disease_name in (
+            "Unclassified/Other Fungal Leaf Spot",
+            "Unknown",
+        ):
+            info = self.kb.get("Unclassified/Other Fungal Leaf Spot")
+            result = info.copy()
+            result["disease_name"] = disease_name
+            result["disclaimer"] = self.disclaimer
+            return result
+
         info = self.kb.get(disease_name)
         if info is None:
             # Fallback for unmapped or unknown class
@@ -156,8 +195,7 @@ class DiseaseKnowledgeBase:
                 "favorable_conditions": ["Varies."],
                 "preventive_measures": ["Consult local agricultural extension for diagnosis."],
                 "general_management_practices": ["Consult an agronomist."],
-                "disclaimer": self.disclaimer
-            }
+                "disclaimer": self.disclaimer }
             
         result = info.copy()
         result["disclaimer"] = self.disclaimer
@@ -167,7 +205,9 @@ class DiseaseKnowledgeBase:
         """Returns list of all supported disease names."""
         return list(self.kb.keys())
 
+
 _kb_instance = None
+
 
 def get_knowledge_base() -> DiseaseKnowledgeBase:
     """Singleton getter for DiseaseKnowledgeBase."""

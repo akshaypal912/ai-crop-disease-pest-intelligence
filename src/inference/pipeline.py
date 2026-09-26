@@ -1,19 +1,35 @@
 import io
 from pathlib import Path
-from typing import Dict, Any, Union
+from typing import Dict, Any, Union, Optional
 from PIL import Image
 import torch
 import torch.nn.functional as F
 
 from src.utils.config import Config
+from src.utils.prediction_status import (
+    PredictionStatus,
+    determine_prediction_status,
+    should_provide_diagnosis,
+    get_status_message,
+    CONFIDENCE_THRESHOLD_HIGH,
+    CONFIDENCE_THRESHOLD_LOW,
+)
+from src.utils.image_quality import validate_image_quality
 from src.preprocessing.transforms import get_val_test_transforms
 from src.models.classifier import TomatoDiseaseClassifier
 
+
 class DiseaseInferencePipeline:
     """
-    Production-ready Inference Engine for Crop Disease Image Classification.
-    Uses the exact same preprocessing transforms as validation & evaluation pipelines.
-    Handles image bytes, file paths, and PIL Images with full error checking.
+    Uncertainty-Aware Disease Inference Engine.
+    
+    Integrates image quality validation, confidence thresholding, and structured
+    prediction status to avoid forcing out-of-distribution images into disease classes.
+    
+    Pipeline:
+        Image Input → Quality Validation → Model Inference → Status Determination → Structured Output
+    
+    Returns explicit UNSUPPORTED/UNCERTAIN status instead of forcing classification.
     """
     
     def __init__(self, model_path: Union[str, Path] = Config.DEFAULT_MODEL_SAVE_PATH, device: str = None):
@@ -95,40 +111,119 @@ class DiseaseInferencePipeline:
 
     def predict(self, image_input: Union[str, Path, bytes, io.BytesIO, Image.Image]) -> Dict[str, Any]:
         """
-        Runs inference on input image and returns structured result payload.
+        Runs inference on input image with uncertainty-aware prediction status.
+        
+        Pipeline:
+            1. Image quality validation (resolution, format, corruption)
+            2. Model inference (if quality OK)
+            3. Confidence-based status determination
+            4. Conditional disease name (only if confident)
         
         Returns:
             Dict containing:
-                - crop (str)
-                - predicted_disease (str)
-                - confidence (float)
-                - class_probabilities (Dict[str, float])
+                - prediction_status (PredictionStatus): Confidence/validity state
+                - status_message (str): Human-readable explanation
+                - crop (str): Target crop name
+                - disease (Optional[str]): Disease name (None if uncertain)
+                - model_confidence (float): Raw model confidence (NOT calibrated probability)
+                - class_probabilities (Dict[str, float]): All class scores
+                - raw_predicted_class (str): Top class before filtering
+                - quality_warnings (List[str]): Image quality issues
         """
         if self.model is None:
             raise RuntimeError("Model is not initialized or loaded.")
-            
-        pil_img = self.validate_and_load_image(image_input)
-        tensor = self.transform(pil_img).unsqueeze(0).to(self.device)
+
+        if isinstance(image_input, bytes):
+            if len(image_input) == 0:
+                raise ValueError("Received empty image file buffer (0 bytes).")
+            try:
+                import io
+                Image.open(io.BytesIO(image_input)).verify()
+            except Exception as exc:
+                raise ValueError(f"Invalid or corrupted image: cannot identify image file. ({exc})") from exc
+
         
+        # Step 1: Image Quality Validation
+        quality_result = validate_image_quality(image_input, check_blur=False)
+        
+        if not quality_result["valid"]:
+            # Image failed quality checks - return INVALID_IMAGE status
+            return {
+                "prediction_status": PredictionStatus.INVALID_IMAGE,
+                "status_message": get_status_message(PredictionStatus.INVALID_IMAGE),
+                "crop": self.crop_name,
+                "disease": None,
+                "predicted_disease": None,           # backward-compat alias
+                "model_confidence": 0.0,
+                "confidence": 0.0,                   # backward-compat alias
+                "class_probabilities": {},
+                "raw_predicted_class": None,
+                "quality_errors": quality_result.get("errors", []),
+                "quality_warnings": quality_result.get("warnings", []),
+            }
+        
+        # Step 2: Load and preprocess image
+        try:
+            pil_img = self.validate_and_load_image(image_input)
+            tensor = self.transform(pil_img).unsqueeze(0).to(self.device)
+        except Exception as e:
+            return {
+                "prediction_status": PredictionStatus.INVALID_IMAGE,
+                "status_message": f"Image loading failed: {str(e)}",
+                "crop": self.crop_name,
+                "disease": None,
+                "predicted_disease": None,           # backward-compat alias
+                "model_confidence": 0.0,
+                "confidence": 0.0,                   # backward-compat alias
+                "class_probabilities": {},
+                "raw_predicted_class": None,
+                "quality_errors": [str(e)],
+                "quality_warnings": [],
+            }
+        
+        # Step 3: Model Inference
         with torch.no_grad():
             logits = self.model(tensor)
             probs = F.softmax(logits, dim=1).squeeze(0)
             
         top_prob, top_idx = torch.max(probs, dim=0)
+        conf_val = round(float(top_prob.item()), 4)
+        raw_predicted_class = self.class_names[top_idx.item()]
         
         prob_dict = {
             self.class_names[i]: round(float(probs[i].item()), 4)
             for i in range(len(self.class_names))
         }
         
+        # Step 4: Determine Prediction Status based on confidence
+        prediction_status = determine_prediction_status(conf_val, image_valid=True)
+        status_message = get_status_message(prediction_status)
+        
+        # Step 5: Conditional Disease Name
+        # Only provide disease name if confidence meets minimum threshold
+        if should_provide_diagnosis(prediction_status):
+            disease_name = raw_predicted_class
+        else:
+            disease_name = None
+        
         return {
+            "prediction_status": prediction_status,
+            "status_message": status_message,
             "crop": self.crop_name,
-            "predicted_disease": self.class_names[top_idx.item()],
-            "confidence": round(float(top_prob.item()), 4),
-            "class_probabilities": prob_dict
+            "disease": disease_name,
+            "predicted_disease": disease_name,       # backward-compat alias
+            "model_confidence": conf_val,
+            "confidence": conf_val,                  # backward-compat alias
+            "class_probabilities": prob_dict,
+            "raw_predicted_class": raw_predicted_class,
+            "quality_warnings": quality_result.get("warnings", []),
+            "confidence_threshold_high": CONFIDENCE_THRESHOLD_HIGH,
+            "confidence_threshold_low": CONFIDENCE_THRESHOLD_LOW,
         }
 
+
 _pipeline_instance = None
+
 
 def get_inference_pipeline(model_path: Union[str, Path] = Config.DEFAULT_MODEL_SAVE_PATH) -> DiseaseInferencePipeline:
     """Singleton getter for inference pipeline."""

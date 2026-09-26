@@ -1,57 +1,72 @@
 # AI-Based Crop Disease & Pest Intelligence Platform
 
-An end-to-end, modular deep learning and agronomic intelligence solution for crop disease classification, pest detection, contextual severity estimation, weather-aware risk assessment, structured agricultural recommendations, and real-time risk alerts.
+An end-to-end, modular deep learning and agronomic intelligence solution for crop disease classification, pest detection, contextual severity estimation, weather-aware risk assessment, structured agricultural recommendations, real-time risk alerts, and an interactive farmer dashboard.
 
 ---
 
-## 🌟 Unified Intelligence Architecture
+## 🌟 Application Flow Architecture
 
 ```
-                                 Uploaded Leaf Image
-                                          │
-                  ┌───────────────────────┼───────────────────────┐
-                  ▼                       ▼                       ▼
-       ┌──────────────────────┐┌──────────────────────┐┌──────────────────────┐
-       │ Disease Classifier   ││ Severity Estimator   ││ Pest Detection (YOLO)│
-       │ (MobileNetV2 CNN)    ││ (HSV Segmentation)   ││ [CONFIG REQUIRED]    │
-       │ → disease + conf     ││ [PROTOTYPE]          ││ → pest + bbox + conf │
-       └──────────┬───────────┘└──────────┬───────────┘└──────────┬───────────┘
-                  │                       │                       │
-                  └──────────────┬────────┘                       │
-                                 ▼                                │
-                      ┌──────────────────────┐                    │
-                      │ Disease KB           │                    │
-                      │ (Symptoms, Causes)   │                    │
-                      └──────────┬───────────┘                    │
-                                 │                                │
-                                 ▼                                │
-                      ┌──────────────────────┐                    │
-                      │ Weather Service      │                    │
-                      │ (OpenWeatherMap API) │                    │
-                      │ [OPTIONAL]           │                    │
-                      └──────────┬───────────┘                    │
-                                 │                                │
-                                 ▼                                │
-                      ┌──────────────────────┐                    │
-                      │ Risk Engine          │                    │
-                      │ (Heuristic Scoring)  │                    │
-                      │ [PROTOTYPE]          │                    │
-                      └──────────┬───────────┘                    │
-                                 │                                │
-                  ┌──────────────┴────────────────────────────────┘
-                  ▼
-       ┌──────────────────────────────────────────────────────────────┐
-       │ Recommendation Engine (IPM, Cultural, Non-chemical Guidelines)│
-       └──────────────────────────────┬───────────────────────────────┘
-                                      ▼
-       ┌──────────────────────────────────────────────────────────────┐
-       │ Alert Engine (High/Critical Real-Time Risk Notification)     │
-       └──────────────────────────────┬───────────────────────────────┘
-                                      ▼
-                      Unified Crop Health Report
+                             Farmer / User
+                                  │
+                                  ▼ (Uploads Image via UI)
+                     Streamlit Farmer Dashboard
+                                  │
+                                  ▼ (HTTP POST /predict)
+                          FastAPI Backend
+                                  │
+                                  ▼
+                        Analysis Orchestrator
+                                  │
+  ┌───────────────────────────────┼───────────────────────────────┐
+  ▼                               ▼                               ▼
+Disease Model (CNN)      Severity Estimator           Pest Detection (YOLO)
+[MobileNetV2 Transfer]   [HSV Segmentation]           [CONFIG REQUIRED]
+→ Disease + Confidence   → Severity Level (Prototype) → Pests + Bounding Boxes
+  │                               │                               │
+  └──────────────┬────────────────┘                               │
+                 ▼                                                │
+       Disease Knowledge Base                                     │
+       (Symptoms & Causes)                                        │
+                 │                                                │
+                 ▼                                                │
+          Weather Service                                         │
+       (OpenWeatherMap API)                                       │
+                 │                                                │
+                 ▼                                                │
+            Risk Engine                                           │
+       (Multi-Factor Heuristic)                                   │
+                 │                                                │
+  ┌──────────────┴────────────────────────────────────────────────┘
+  ▼
+Recommendation Engine (IPM, Cultural, Non-chemical Guidelines)
+  │
+  ▼
+Alert Engine (High/Critical Real-Time Risk Notification)
+  │
+  ▼
+Unified Crop Health Report
+  │
+  ▼ (JSON Response)
+Streamlit Farmer Dashboard (Interactive Cards, Alerts, History & Visualization)
 ```
 
-> ⚗️ **Prototype & Validation Notice**: Severity estimation and risk engine scoring are heuristic decision-support prototypes and are not scientifically calibrated on formal field-trial epidemiology datasets. Outputs carry explicit disclaimers.
+> ⚗️ **Prototype & Validation Notice**: Severity estimation and contextual risk scoring are prototype heuristics designed for agricultural decision-support; they are not scientifically calibrated on formal field-trial epidemiology datasets. Disease classification is trained on tomato leaf subsets and should be visually confirmed. All outputs carry explicit disclaimers.
+
+---
+
+## 🚀 Current Feature Status
+
+| Feature / Subsystem | Status | Description |
+|---------------------|--------|-------------|
+| **Disease Classification** | **IMPLEMENTED** | MobileNetV2 fine-tuned on Tomato health classes (Healthy, Early Blight, Late Blight, Leaf Mold). |
+| **Disease Severity Estimation** | **IMPLEMENTED (Prototype)** | OpenCV HSV colour-space segmentation with heuristic category thresholds (Low, Moderate, High). |
+| **Weather Context** | **IMPLEMENTED (Optional)** | OpenWeatherMap API integration. Gracefully skipped when unconfigured. |
+| **Risk Scoring Engine** | **IMPLEMENTED (Prototype)** | Multi-factor weighted index combining model confidence, severity heuristics, and environmental bands. |
+| **Pest Detection** | **CONFIGURATION REQUIRED** | YOLOv8 pipeline and inference architecture fully implemented with graceful fallback. Requires placing trained `pest_yolov8.pt` weights in `src/models/pest_detection/weights/`. No fake predictions are generated. |
+| **Structured Recommendations** | **IMPLEMENTED** | Source-attributed IPM, sanitation, cultural, and scouting guidelines without arbitrary chemical dosages. |
+| **Real-Time Risk Alerts** | **IMPLEMENTED** | High and Critical risk alerts with contributing reason summaries. |
+| **Farmer Web Dashboard** | **IMPLEMENTED** | Glassmorphism Streamlit interface with live API integration, pest bounding box overlay, weather grid, and session analysis history. |
 
 ---
 
@@ -63,7 +78,7 @@ ai-crop-disease-pest-intelligence/
 │   ├── __init__.py
 │   └── main.py                        # Unified FastAPI REST API v0.3.0
 ├── app/
-│   └── streamlit_app.py               # Streamlit Farmer Interface
+│   └── streamlit_app.py               # Upgraded Streamlit Farmer Dashboard
 ├── src/
 │   ├── models/
 │   │   ├── classifier.py              # MobileNetV2 disease model
@@ -98,10 +113,10 @@ ai-crop-disease-pest-intelligence/
 │   ├── evaluation/                    # Evaluation & confusion matrix
 │   └── utils/                         # Config & dataset utilities
 ├── tests/
-│   ├── test_pest_detection.py         # Pest detection tests (NEW)
-│   ├── test_recommendations.py        # Recommendation engine tests (NEW)
-│   ├── test_alerts.py                 # Alert engine tests (NEW)
-│   ├── test_api.py                    # Unified API tests (UPDATED)
+│   ├── test_pest_detection.py         # Pest detection tests
+│   ├── test_recommendations.py        # Recommendation engine tests
+│   ├── test_alerts.py                 # Alert engine tests
+│   ├── test_api.py                    # Unified API tests
 │   ├── test_severity.py               # Severity unit tests
 │   ├── test_weather.py                # Weather service unit tests
 │   ├── test_risk_engine.py            # Risk engine unit tests
@@ -115,21 +130,7 @@ ai-crop-disease-pest-intelligence/
 
 ---
 
-## 🚀 Component Status & Readiness
-
-| Subsystem | Status | Description |
-|-----------|--------|-------------|
-| **Disease Classification** | **IMPLEMENTED** | MobileNetV2 trained on 4 classes (Healthy, Early Blight, Late Blight, Leaf Mold). |
-| **Severity Estimation** | **IMPLEMENTED (Prototype)** | OpenCV HSV colour-space segmentation with heuristic category mapping. |
-| **Weather Context** | **IMPLEMENTED (Optional)** | OpenWeatherMap API integration. Graceful fallback if unconfigured. |
-| **Risk Engine** | **IMPLEMENTED (Prototype)** | Multi-factor weighted contextual risk index (0.0 to 1.0). |
-| **Pest Detection** | **CONFIGURATION REQUIRED** | Pipeline & detector architecture fully implemented; requires placing trained `pest_yolov8.pt` weights in `src/models/pest_detection/weights/`. Gracefully returns empty list if weights are missing. |
-| **Recommendation Engine** | **IMPLEMENTED** | Rule-based, source-attributed IPM guidance without unsafe chemical dosages. |
-| **Alert Engine** | **IMPLEMENTED** | Automated alert payload generator for High and Critical risk levels. |
-
----
-
-## ⚡ Quick Start
+## ⚡ Quick Start & Running the Platform
 
 ### 1. Installation
 
@@ -154,25 +155,40 @@ copy .env.example .env
 
 Edit `.env`:
 ```env
-# Optional: Weather integration
+# Optional: Live weather context
 OPENWEATHER_API_KEY=your_openweathermap_api_key_here
 
-# Optional: Custom path to trained YOLOv8 pest model weights
+# Optional: Custom API URL for Streamlit frontend
+API_BASE_URL=http://localhost:8000
+
+# Optional: Path to custom YOLOv8 pest weights
 PEST_MODEL_PATH=src/models/pest_detection/weights/pest_yolov8.pt
 ```
 
-### 3. Start the Unified API
+### 3. Running Backend (FastAPI REST API)
+
+Start the FastAPI application:
 
 ```bash
 uvicorn api.main:app --reload --port 8000
 ```
 
-- **Interactive API Docs (Swagger)**: `http://localhost:8000/docs`
-- **Alternative Docs (ReDoc)**: `http://localhost:8000/redoc`
+- **Interactive API Documentation (Swagger)**: `http://localhost:8000/docs`
+- **Health Check**: `http://localhost:8000/health`
+
+### 4. Running Frontend (Streamlit Dashboard)
+
+In a separate terminal, launch the Streamlit farmer dashboard:
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
+- **Farmer Dashboard URL**: `http://localhost:8501`
 
 ---
 
-## 📡 Unified API Response Example
+## 📡 API Response Structure
 
 ### `POST /predict?city=Mumbai&growth_stage=flowering`
 
@@ -213,7 +229,7 @@ uvicorn api.main:app --reload --port 8000
     "location_name": "Mumbai",
     "country": "IN",
     "temperature_c": 28.5,
-    "humidity_pct": 86,
+    "humidity_pct": 86.0,
     "rainfall_mm": 4.2,
     "condition": "Rain"
   },
@@ -267,38 +283,29 @@ uvicorn api.main:app --reload --port 8000
 
 ---
 
-## 🧪 Testing
+## 🧪 Automated Testing
 
-Run the full automated test suite (97 tests):
+Run the entire automated test suite:
 
 ```bash
 pytest tests/ -v
 ```
 
-Run specific test modules:
-
-```bash
-# Pest detection tests
-pytest tests/test_pest_detection.py -v
-
-# Recommendation engine tests
-pytest tests/test_recommendations.py -v
-
-# Alert engine tests
-pytest tests/test_alerts.py -v
-
-# API integration tests
-pytest tests/test_api.py -v
-```
+All 97 unit and integration tests validate the complete end-to-end pipeline:
+- `test_pest_detection.py`: Graceful missing-weights fallback, input formats, mocked bounding boxes.
+- `test_recommendations.py`: Multi-category generation, source metadata, chemical safety verification.
+- `test_alerts.py`: High/Critical active triggers, Low/Medium inactive states.
+- `test_api.py`: FastAPI `/health` and `/predict` integration, error handling, weather resilience.
+- `test_severity.py`, `test_weather.py`, `test_risk_engine.py`, `test_inference.py`, `test_knowledge.py`.
 
 ---
 
 ## ⚠️ Current Scope & Limitations
 
-1. **Pest Model Weights**: The pest detection architecture is implemented and unit-tested with mocks and graceful fallbacks. Actual pest inference on real images requires downloading or training YOLOv8 weights (`pest_yolov8.pt`).
-2. **Prototype Estimates**: Severity percentages and risk scores are heuristic indices designed to demonstrate contextual intelligence workflows, not certified agronomic diagnostics.
-3. **Chemical Safety**: The recommendation engine strictly limits advice to non-chemical IPM, cultural, biological, and sanitation measures; pesticide prescriptions require certified local extension consultation.
-4. **Single-Crop Focus**: Currently focused on Tomato (*Solanum lycopersicum*).
+1. **Pest Model Weights**: The pest detection pipeline is fully implemented and tested with mocks. Actual pest detection on physical images requires placing trained YOLOv8 weights (`pest_yolov8.pt`) in `src/models/pest_detection/weights/`. The system currently operates safely with graceful fallback.
+2. **Prototype Estimates**: Severity percentages and risk index scores are heuristic approximations designed for contextual decision-support, not laboratory diagnoses.
+3. **Pesticide Prescriptions**: Recommendation engine strictly limits guidance to non-chemical IPM, cultural, biological, and sanitation measures; chemical treatments require certified local agronomist consultation.
+4. **Target Crop**: Currently focused on Tomato (*Solanum lycopersicum*).
 
 ---
 

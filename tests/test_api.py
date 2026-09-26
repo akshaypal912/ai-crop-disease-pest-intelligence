@@ -30,7 +30,7 @@ SAMPLE_IMAGE_PATH = Config.RAW_DATA_DIR / "Tomato___healthy" / "sample_Tomato___
 
 @pytest.fixture
 def client():
-    return TestClient(app)
+    return TestClient(app, raise_server_exceptions=True)
 
 
 def _create_test_image_bytes():
@@ -90,8 +90,8 @@ def test_predict_unified_response_schema(client, monkeypatch):
     if SAMPLE_IMAGE_PATH.exists():
         img_bytes = SAMPLE_IMAGE_PATH.read_bytes()
     else:
-        img_bytes = _create_test_image_bytes()
-
+        monkeypatch.setattr("api.main.get_pest_pipeline", lambda: MockPestPipeline())
+        monkeypatch.setattr("api.main.compute_risk_with_validation", mock_compute_risk)
     response = client.post(
         "/predict",
         files={"file": ("leaf.jpg", img_bytes, "image/jpeg")}
@@ -151,11 +151,43 @@ def test_predict_unified_response_schema(client, monkeypatch):
 
 
 def test_predict_with_mocked_pests_and_high_risk_alert(client, monkeypatch):
+    client = __import__("fastapi.testclient").testclient.TestClient(app, raise_server_exceptions=True)
     """Test unified pipeline when pests are detected and high risk triggers active alert."""
     if SAMPLE_IMAGE_PATH.exists():
         img_bytes = SAMPLE_IMAGE_PATH.read_bytes()
     else:
         img_bytes = _create_test_image_bytes()
+
+    # Mock inference to return CONFIDENT_PREDICTION mapping to bypass suppression rules
+    class MockInferencePipeline:
+        def predict(self, _):
+            from src.utils.prediction_status import PredictionStatus
+            return {
+                "prediction_status": PredictionStatus.SUPPORTED_HIGH_CONFIDENCE,
+                "crop": "Tomato",
+                "disease": "Tomato___Early_blight",
+                "predicted_disease": "Tomato___Early_blight",
+                "confidence": 0.95,
+                "model_confidence": 0.95,
+                "class_probabilities": {},
+            }
+    monkeypatch.setattr("api.main.get_inference_pipeline", lambda: MockInferencePipeline())
+
+    # Mock pest pipeline to return simulated detections
+    # Mock inference to return CONFIDENT_PREDICTION mapping to bypass suppression rules
+    class MockInferencePipeline:
+        def predict(self, _):
+            from src.utils.prediction_status import PredictionStatus
+            return {
+                "prediction_status": PredictionStatus.SUPPORTED_HIGH_CONFIDENCE,
+                "crop": "Tomato",
+                "disease": "Tomato___Early_blight",
+                "predicted_disease": "Tomato___Early_blight",
+                "confidence": 0.95,
+                "model_confidence": 0.95,
+                "class_probabilities": {},
+            }
+    monkeypatch.setattr("api.main.get_inference_pipeline", lambda: MockInferencePipeline())
 
     # Mock pest pipeline to return simulated detections
     class MockPestPipeline:
@@ -186,7 +218,7 @@ def test_predict_with_mocked_pests_and_high_risk_alert(client, monkeypatch):
         }
 
     monkeypatch.setattr("api.main.get_pest_pipeline", lambda: MockPestPipeline())
-    monkeypatch.setattr("api.main.compute_risk", mock_compute_risk)
+    monkeypatch.setattr("api.main.compute_risk_with_validation", mock_compute_risk)
 
     response = client.post(
         "/predict?growth_stage=flowering",
