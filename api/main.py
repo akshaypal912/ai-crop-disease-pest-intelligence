@@ -70,11 +70,17 @@ class DiseaseResult(BaseModel):
 
 
 class SeverityResult(BaseModel):
-    status: str = "UNAVAILABLE"                        # PROTOTYPE | UNRELIABLE | UNAVAILABLE
-    level: Optional[str] = None                        # Low | Moderate | High | None
+    status: str = "UNAVAILABLE"
+    level: Optional[str] = None
     visible_affected_area_percentage: Optional[float] = None
     method: Optional[str] = None
     message: Optional[str] = None
+    
+    # Backwards compatibility keys below:
+    severity: Optional[str] = None
+    affected_area_percentage: Optional[float] = None
+    estimation_method: Optional[str] = None
+    prototype_disclaimer: Optional[str] = None
 
 
 class PestDetectionItem(BaseModel):
@@ -238,7 +244,7 @@ async def predict_crop_intelligence(
 
     # Extract prediction status and disease info
     predicted_disease = inference_result.get("predicted_disease")  # May be None
-    confidence = inference_result["confidence"]
+    confidence = inference_result.get("confidence", inference_result.get("model_confidence", 0.0))
     prediction_status = inference_result["prediction_status"]  # PredictionStatus enum
     status_message = inference_result.get("status_message", "")
 

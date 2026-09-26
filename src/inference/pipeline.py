@@ -132,6 +132,16 @@ class DiseaseInferencePipeline:
         """
         if self.model is None:
             raise RuntimeError("Model is not initialized or loaded.")
+
+        if isinstance(image_input, bytes):
+            if len(image_input) == 0:
+                raise ValueError("Received empty image file buffer (0 bytes).")
+            try:
+                import io
+                Image.open(io.BytesIO(image_input)).verify()
+            except Exception as exc:
+                raise ValueError(f"Invalid or corrupted image: cannot identify image file. ({exc})") from exc
+
         
         # Step 1: Image Quality Validation
         quality_result = validate_image_quality(image_input, check_blur=False)
@@ -143,7 +153,9 @@ class DiseaseInferencePipeline:
                 "status_message": get_status_message(PredictionStatus.INVALID_IMAGE),
                 "crop": self.crop_name,
                 "disease": None,
+                "predicted_disease": None,           # backward-compat alias
                 "model_confidence": 0.0,
+                "confidence": 0.0,                   # backward-compat alias
                 "class_probabilities": {},
                 "raw_predicted_class": None,
                 "quality_errors": quality_result.get("errors", []),
@@ -160,7 +172,9 @@ class DiseaseInferencePipeline:
                 "status_message": f"Image loading failed: {str(e)}",
                 "crop": self.crop_name,
                 "disease": None,
+                "predicted_disease": None,           # backward-compat alias
                 "model_confidence": 0.0,
+                "confidence": 0.0,                   # backward-compat alias
                 "class_probabilities": {},
                 "raw_predicted_class": None,
                 "quality_errors": [str(e)],
@@ -197,7 +211,9 @@ class DiseaseInferencePipeline:
             "status_message": status_message,
             "crop": self.crop_name,
             "disease": disease_name,
+            "predicted_disease": disease_name,       # backward-compat alias
             "model_confidence": conf_val,
+            "confidence": conf_val,                  # backward-compat alias
             "class_probabilities": prob_dict,
             "raw_predicted_class": raw_predicted_class,
             "quality_warnings": quality_result.get("warnings", []),

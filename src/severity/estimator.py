@@ -119,7 +119,7 @@ class SeverityEstimator:
         """
         # Check if diagnosis is uncertain - do not estimate severity
         if prediction_status and not should_compute_severity(prediction_status):
-            return {
+            res = {
                 "status": "UNRELIABLE",
                 "level": None,
                 "visible_affected_area_percentage": None,
@@ -129,16 +129,30 @@ class SeverityEstimator:
                     "A confident disease identification is required for meaningful severity analysis."
                 ),
             }
+            res.update({
+                "severity": "Unknown",
+                "affected_area_percentage": None,
+                "estimation_method": "uncertain_diagnosis_fallback",
+                "prototype_disclaimer": res["message"]
+            })
+            return res
 
         # Short-circuit for healthy predictions
         if predicted_disease and predicted_disease.lower() == "healthy":
-            return {
+            res = {
                 "status": "PROTOTYPE",
                 "level": "Low",
                 "visible_affected_area_percentage": 0.0,
                 "method": "healthy_class_passthrough",
                 "message": "Healthy classification: no visible disease symptoms expected.",
             }
+            res.update({
+                "severity": res["level"],
+                "affected_area_percentage": res["visible_affected_area_percentage"],
+                "estimation_method": res["method"],
+                "prototype_disclaimer": "PROTOTYPE: Severity values are heuristic estimates..."
+            })
+            return res
 
         if not self._cv2_available:
             return self._fallback_result()
@@ -147,7 +161,7 @@ class SeverityEstimator:
             pil_img = self._load_pil(image_input)
             affected_pct = self._compute_affected_percentage(pil_img)
             severity = self._pct_to_category(affected_pct)
-            return {
+            res = {
                 "status": "PROTOTYPE",
                 "level": severity,
                 "visible_affected_area_percentage": round(affected_pct, 2),
@@ -157,6 +171,13 @@ class SeverityEstimator:
                     "This is a heuristic estimate and not a validated epidemiological severity measurement."
                 ),
             }
+            res.update({
+                "severity": res["level"],
+                "affected_area_percentage": res["visible_affected_area_percentage"],
+                "estimation_method": res["method"],
+                "prototype_disclaimer": res["message"]
+            })
+            return res
         except Exception as exc:
             logger.warning("Severity estimation failed: %s. Returning fallback.", exc)
             return self._fallback_result()
@@ -246,16 +267,19 @@ class SeverityEstimator:
         }
 
     @staticmethod
+    @staticmethod
     def _fallback_result() -> Dict[str, Any]:
+        msg = "Severity estimation unavailable: opencv-python not installed or image processing failed."
         return {
             "status": "UNAVAILABLE",
             "level": None,
             "visible_affected_area_percentage": None,
             "method": "unavailable",
-            "message": (
-                "Severity estimation unavailable: opencv-python not installed "
-                "or image processing failed."
-            ),
+            "message": msg,
+            "severity": "Unknown",
+            "affected_area_percentage": None,
+            "estimation_method": "unavailable",
+            "prototype_disclaimer": msg
         }
 
 

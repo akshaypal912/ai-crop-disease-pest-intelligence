@@ -188,7 +188,7 @@ class DiseaseKnowledgeBase:
             # Fallback for unmapped or unknown class
             return {
                 "disease_name": disease_name,
-                "crop": Config.CROP_NAME,
+                "crop": "Tomato",
                 "scientific_name": "Unknown",
                 "symptoms": ["No specific symptom data available for this class."],
                 "general_causes": ["Unknown pathogen."],
