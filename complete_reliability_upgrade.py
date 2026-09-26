@@ -1,4 +1,22 @@
-"""Image Quality Validation Module."""
+#!/usr/bin/env python3
+"""
+Automated Reliability Upgrade Script
+Completes all critical file modifications for uncertainty-aware system.
+"""
+
+import shutil
+from pathlib import Path
+
+# Backup originals
+def backup_file(filepath):
+    backup = Path(str(filepath) + ".backup")
+    if filepath.exists() and not backup.exists():
+        shutil.copy2(filepath, backup)
+        print(f"✓ Backed up: {filepath.name}")
+
+# Complete image_quality.py
+def complete_image_quality():
+    content = '''"""Image Quality Validation Module."""
 import io
 import logging
 from typing import Union, Dict, Any, Tuple
@@ -73,3 +91,26 @@ def get_image_quality_validator(check_blur: bool = False):
 
 def validate_image_quality(image_input, check_blur: bool = False):
     return get_image_quality_validator(check_blur=check_blur).validate(image_input)
+'''
+    
+    path = Path("src/utils/image_quality.py")
+    backup_file(path)
+    path.write_text(content)
+    print(f"✓ Completed: {path}")
+
+# Main execution
+if __name__ == "__main__":
+    print("=" * 60)
+    print("RELIABILITY UPGRADE - Automated Completion")
+    print("=" * 60)
+    
+    complete_image_quality()
+    
+    print("\n" + "=" * 60)
+    print("✓ Phase 1 Complete: Image Quality Module")
+    print("=" * 60)
+    print("\nNext steps:")
+    print("1. Run: python complete_reliability_upgrade.py")
+    print("2. Manually refactor remaining modules per IMPLEMENTATION_PLAN.md")
+    print("3. Run tests: pytest tests/ -v")
+    print("4. Commit changes")
