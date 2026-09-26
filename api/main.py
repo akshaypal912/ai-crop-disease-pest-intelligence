@@ -267,12 +267,6 @@ async def predict_crop_intelligence(
         general_preventive_information=preventive_info,
         disclaimer=disease_info.get("disclaimer", ""),
     )
-        symptoms=disease_info.get("symptoms", []),
-        general_causes=disease_info.get("general_causes", []),
-        favorable_conditions=disease_info.get("favorable_conditions", []),
-        general_preventive_information=preventive_info,
-        disclaimer=disease_info.get("disclaimer", ""),
-    )
 
     # 6. Severity Estimation (status-aware — skips when diagnosis uncertain)
     try:
