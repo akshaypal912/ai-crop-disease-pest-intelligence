@@ -26,6 +26,8 @@ from typing import Union, Dict, Any, Optional
 import numpy as np
 from PIL import Image
 
+from src.utils.prediction_status import PredictionStatus, should_compute_severity
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -94,30 +96,49 @@ class SeverityEstimator:
         self,
         image_input: Union[str, bytes, io.BytesIO, "Image.Image"],
         predicted_disease: Optional[str] = None,
+        prediction_status: Optional[PredictionStatus] = None,
     ) -> Dict[str, Any]:
         """
-        Estimate disease severity from a leaf image.
+        Estimate disease severity from a leaf image with status awareness.
 
         Args:
             image_input: PIL Image, raw bytes, BytesIO, or file path.
             predicted_disease: The predicted disease class name. If "Healthy",
                 severity is returned as 0% / Low without pixel analysis.
+            prediction_status: The prediction status from inference pipeline.
+                If uncertain/invalid, returns UNRELIABLE status.
 
         Returns:
             {
-                "severity": "Low" | "Moderate" | "High",
-                "affected_area_percentage": float,   # 0.0 – 100.0
-                "estimation_method": str,
-                "prototype_disclaimer": str,
+                "status": "PROTOTYPE" | "UNRELIABLE" | "UNAVAILABLE",
+                "level": "Low" | "Moderate" | "High" | None,
+                "visible_affected_area_percentage": float | None,
+                "method": str | None,
+                "message": str,
             }
         """
+        # Check if diagnosis is uncertain - do not estimate severity
+        if prediction_status and not should_compute_severity(prediction_status):
+            return {
+                "status": "UNRELIABLE",
+                "level": None,
+                "visible_affected_area_percentage": None,
+                "method": None,
+                "message": (
+                    "Severity estimation unreliable due to uncertain or invalid diagnosis. "
+                    "A confident disease identification is required for meaningful severity analysis."
+                ),
+            }
+
         # Short-circuit for healthy predictions
         if predicted_disease and predicted_disease.lower() == "healthy":
-            return self._build_result(
-                severity="Low",
-                affected_pct=0.0,
-                method="healthy_class_passthrough",
-            )
+            return {
+                "status": "PROTOTYPE",
+                "level": "Low",
+                "visible_affected_area_percentage": 0.0,
+                "method": "healthy_class_passthrough",
+                "message": "Healthy classification: no visible disease symptoms expected.",
+            }
 
         if not self._cv2_available:
             return self._fallback_result()
@@ -126,11 +147,16 @@ class SeverityEstimator:
             pil_img = self._load_pil(image_input)
             affected_pct = self._compute_affected_percentage(pil_img)
             severity = self._pct_to_category(affected_pct)
-            return self._build_result(
-                severity=severity,
-                affected_pct=round(affected_pct, 2),
-                method="opencv_hsv_colour_segmentation",
-            )
+            return {
+                "status": "PROTOTYPE",
+                "level": severity,
+                "visible_affected_area_percentage": round(affected_pct, 2),
+                "method": "opencv_hsv_colour_segmentation",
+                "message": (
+                    "PROTOTYPE: Visible affected-area estimate from colour-space analysis. "
+                    "This is a heuristic estimate and not a validated epidemiological severity measurement."
+                ),
+            }
         except Exception as exc:
             logger.warning("Severity estimation failed: %s. Returning fallback.", exc)
             return self._fallback_result()
@@ -222,10 +248,11 @@ class SeverityEstimator:
     @staticmethod
     def _fallback_result() -> Dict[str, Any]:
         return {
-            "severity": "Unknown",
-            "affected_area_percentage": None,
-            "estimation_method": "unavailable",
-            "prototype_disclaimer": (
+            "status": "UNAVAILABLE",
+            "level": None,
+            "visible_affected_area_percentage": None,
+            "method": "unavailable",
+            "message": (
                 "Severity estimation unavailable: opencv-python not installed "
                 "or image processing failed."
             ),
@@ -250,8 +277,14 @@ def get_severity_estimator() -> SeverityEstimator:
 def estimate_severity(
     image_input: Union[str, bytes, io.BytesIO, "Image.Image"],
     predicted_disease: Optional[str] = None,
+    prediction_status: Optional[PredictionStatus] = None,
 ) -> Dict[str, Any]:
     """
     Convenience function. Calls SeverityEstimator.estimate() on the singleton instance.
+    
+    Args:
+        image_input: Image in various formats
+        predicted_disease: Predicted disease name
+        prediction_status: Prediction status from inference pipeline
     """
-    return get_severity_estimator().estimate(image_input, predicted_disease)
+    return get_severity_estimator().estimate(image_input, predicted_disease, prediction_status)
