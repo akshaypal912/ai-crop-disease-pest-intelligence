@@ -4,22 +4,13 @@ Risk Engine — Contextual crop-health risk scoring.
 Combines model prediction confidence, disease identity, severity estimate,
 and optional weather context into a composite risk score and level.
 
-IMPORTANT — TRANSPARENCY NOTES:
-
-  1. model_prediction  : The deep learning classifier output (disease + confidence).
-     This is a machine learning estimate, not a laboratory diagnosis.
-
-  2. contextual_estimate: The risk score produced here. It is a HEURISTIC,
-     rule-based scoring aggregate. Weights and thresholds are PROTOTYPE VALUES
-     that require calibration with validated agricultural data before any
-     field-advisory use.
-
-  3. agricultural_evidence: Disease-ecology information from the knowledge base,
-     derived from general plant pathology literature. See disease_risk_profiles.py
-     for sourcing notes.
-
-The engine is deliberately modular so that each sub-scorer can be replaced or
-calibrated independently as better data becomes available.
+Key Design Improvements:
+1. High-severity low-confidence safety: Uses an additive uncertainty penalty
+   so low confidence never suppresses high visible severity into 'Low' risk.
+2. Clamping rule: If severity is High and confidence < 0.50, risk is clamped
+   to at least 'Medium'.
+3. Transparency: When weather data is unavailable, explicitly lists
+   'Environmental risk not included (weather data unavailable)' in factors.
 """
 
 import logging
@@ -48,20 +39,10 @@ RISK_ENGINE_DISCLAIMER = (
     "or management decisions. Consult a qualified agronomist or plant pathologist."
 )
 
-# ---------------------------------------------------------------------------
-# Sub-scorer weight configuration (PROTOTYPE — requires calibration)
-# ---------------------------------------------------------------------------
-# Each sub-score is in [0, 1]. The final risk_score is a weighted average.
-# Weights reflect the assumed relative importance of each factor in this
-# prototype. They have not been derived from statistical modelling of disease
-# spread data and MUST be reviewed before operational use.
 FACTOR_WEIGHTS: Dict[str, float] = {
-    "base_disease":   0.25,  # Identity / severity of the disease itself
-    "model_confidence": 0.15,  # How certain the ML model is
-    "severity":       0.25,  # Estimated affected leaf area
-    "humidity":       0.15,  # Current humidity vs. favourable band
-    "temperature":    0.10,  # Current temperature vs. favourable band
-    "rainfall":       0.10,  # Recent rainfall indicator
+    "severity":            0.50,  # Estimated affected leaf area
+    "base_disease":        0.30,  # Identity / virulence of detected disease
+    "uncertainty_penalty": 0.20,  # Penalty for diagnostic uncertainty (added, not multiplied)
 }
 
 
@@ -100,21 +81,11 @@ class RiskOutput:
 class RiskEngine:
     """
     Modular heuristic risk engine for contextual crop-health assessment.
-
-    Each factor is scored independently (0–1) then combined as a weighted
-    average. The design intentionally separates concerns so individual
-    sub-scorers can be replaced with calibrated models in future phases.
     """
 
     def compute(self, inputs: RiskInput) -> RiskOutput:
         """
         Compute composite risk from the provided inputs.
-
-        Args:
-            inputs: RiskInput dataclass with disease prediction + context.
-
-        Returns:
-            RiskOutput with risk_level, risk_score, factors, and disclaimer.
         """
         profile = get_disease_profile(inputs.disease)
         factors: List[str] = []
@@ -123,26 +94,28 @@ class RiskEngine:
         # --- 1. Base disease score -----------------------------------------
         base = profile["base_disease_score"]
         sub_scores["base_disease"] = base
-        if inputs.disease != "Healthy" and base > 0:
+        if inputs.disease not in ("Healthy", "Uncertain — result may not apply to this crop type") and base > 0:
             factors.append(
                 f"Disease detected: {inputs.disease} "
                 f"(base risk index: {base:.2f} — prototype value)"
             )
 
-        # --- 2. Model confidence -------------------------------------------
-        # High confidence in a disease prediction increases weight on the score.
-        # For Healthy, confidence reduces the overall risk.
+        # --- 2. Uncertainty penalty ----------------------------------------
+        # Low confidence adds an uncertainty penalty instead of multiplying/diluting
         if inputs.disease == "Healthy":
-            conf_score = max(0.0, 1.0 - inputs.confidence)
+            uncertainty_penalty = max(0.0, (1.0 - inputs.confidence) * 0.3)
         else:
-            conf_score = inputs.confidence
-        sub_scores["model_confidence"] = conf_score
-        if conf_score > 0.70:
+            uncertainty_penalty = max(0.0, (1.0 - inputs.confidence) * 1.0)
+
+        sub_scores["uncertainty_penalty"] = uncertainty_penalty
+        sub_scores["model_confidence"] = inputs.confidence
+
+        if inputs.confidence > 0.70:
             factors.append(
                 f"Model confidence: {inputs.confidence * 100:.1f}% "
                 f"(high confidence in prediction)"
             )
-        elif conf_score < 0.40 and inputs.disease != "Healthy":
+        elif inputs.confidence < 0.40 and inputs.disease != "Healthy":
             factors.append(
                 f"Model confidence: {inputs.confidence * 100:.1f}% "
                 f"(low confidence — result uncertain)"
@@ -152,35 +125,55 @@ class RiskEngine:
         severity_score = self._score_severity(inputs.severity_pct, factors)
         sub_scores["severity"] = severity_score
 
-        # --- 4. Humidity ---------------------------------------------------
-        humidity_score = self._score_humidity(
-            inputs.humidity_pct, profile["humidity_favourable_pct"], factors
-        )
-        sub_scores["humidity"] = humidity_score
-
-        # --- 5. Temperature -----------------------------------------------
-        temp_score = self._score_temperature(
-            inputs.temperature_c, profile["temp_favourable_c"], factors
-        )
-        sub_scores["temperature"] = temp_score
-
-        # --- 6. Rainfall ---------------------------------------------------
-        rainfall_score = self._score_rainfall(
-            inputs.rainfall_mm, profile["rainfall_increases_risk"], factors
-        )
-        sub_scores["rainfall"] = rainfall_score
-
-        # --- Weighted aggregate -------------------------------------------
-        weighted = (
-            FACTOR_WEIGHTS["base_disease"]     * sub_scores["base_disease"] +
-            FACTOR_WEIGHTS["model_confidence"] * sub_scores["model_confidence"] +
-            FACTOR_WEIGHTS["severity"]         * sub_scores["severity"] +
-            FACTOR_WEIGHTS["humidity"]         * sub_scores["humidity"] +
-            FACTOR_WEIGHTS["temperature"]      * sub_scores["temperature"] +
-            FACTOR_WEIGHTS["rainfall"]         * sub_scores["rainfall"]
+        # --- 4. Weather factors (or explicit fallback note) ----------------
+        has_weather = not (
+            inputs.temperature_c is None and
+            inputs.humidity_pct is None and
+            inputs.rainfall_mm is None
         )
 
-        # --- Growth stage multiplier -------------------------------------
+        if has_weather:
+            humidity_score = self._score_humidity(
+                inputs.humidity_pct, profile["humidity_favourable_pct"], factors
+            )
+            sub_scores["humidity"] = humidity_score
+
+            temp_score = self._score_temperature(
+                inputs.temperature_c, profile["temp_favourable_c"], factors
+            )
+            sub_scores["temperature"] = temp_score
+
+            rainfall_score = self._score_rainfall(
+                inputs.rainfall_mm, profile["rainfall_increases_risk"], factors
+            )
+            sub_scores["rainfall"] = rainfall_score
+
+            # Blended score with environmental terms
+            base_risk = (
+                FACTOR_WEIGHTS["severity"] * severity_score +
+                FACTOR_WEIGHTS["base_disease"] * base +
+                FACTOR_WEIGHTS["uncertainty_penalty"] * uncertainty_penalty
+            )
+            weather_addition = (
+                0.15 * humidity_score +
+                0.10 * temp_score +
+                0.10 * rainfall_score
+            )
+            weighted = min(1.0, base_risk + weather_addition)
+        else:
+            sub_scores["humidity"] = 0.0
+            sub_scores["temperature"] = 0.0
+            sub_scores["rainfall"] = 0.0
+            factors.append("Environmental risk not included (weather data unavailable)")
+
+            # Standard 3-term additive formula
+            weighted = (
+                FACTOR_WEIGHTS["severity"] * severity_score +
+                FACTOR_WEIGHTS["base_disease"] * base +
+                FACTOR_WEIGHTS["uncertainty_penalty"] * uncertainty_penalty
+            )
+
+        # --- 5. Growth stage multiplier -----------------------------------
         growth_mult = get_growth_stage_multiplier(inputs.growth_stage or "unknown")
         if inputs.growth_stage and inputs.growth_stage.lower() in ("flowering", "fruiting"):
             factors.append(
@@ -191,8 +184,19 @@ class RiskEngine:
         final_score = min(1.0, max(0.0, weighted * growth_mult))
         risk_level = self._score_to_level(final_score)
 
+        # --- 6. Hard safety clamping rule ---------------------------------
+        # If severity is High (>= 30%) and confidence < 0.50, risk must NEVER be Low
+        is_high_severity = (inputs.severity_pct is not None and inputs.severity_pct >= 30.0)
+        is_low_conf = (inputs.confidence < 0.50)
+
+        if is_high_severity and is_low_conf and inputs.disease != "Healthy":
+            if risk_level == "Low":
+                risk_level = "Medium"
+                final_score = max(final_score, 0.35)
+            factors.append("Low model confidence combined with high severity — risk elevated as precaution")
+
         # Healthy with high confidence short-circuits to Low
-        if inputs.disease == "Healthy" and inputs.confidence >= 0.80:
+        if inputs.disease == "Healthy" and inputs.confidence >= 0.80 and not is_high_severity:
             final_score = min(final_score, 0.20)
             risk_level = "Low"
             if not factors:
@@ -236,7 +240,7 @@ class RiskEngine:
     ) -> float:
         """Score humidity: 1.0 if within favourable band, 0.0 if below, linear otherwise."""
         if humidity_pct is None:
-            return 0.0  # Weather not provided; exclude factor
+            return 0.0
         if favourable_band is None:
             return 0.0
 
@@ -270,7 +274,6 @@ class RiskEngine:
                 f"({low:.0f}–{high:.0f}°C)"
             )
             return 1.0
-        # Partial score within ±5°C of the band
         margin = 5.0
         if temperature_c < low:
             dist = low - temperature_c
@@ -340,8 +343,6 @@ def compute_risk(
 ) -> Dict[str, Any]:
     """
     Convenience function. Calls RiskEngine.compute() on the singleton instance.
-
-    Returns dict suitable for JSON serialisation.
     """
     inp = RiskInput(
         disease=disease,

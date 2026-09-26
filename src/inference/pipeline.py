@@ -6,14 +6,21 @@ import torch
 import torch.nn.functional as F
 
 from src.utils.config import Config
+from src.utils.confidence_utils import (
+    check_crop_mismatch,
+    UNCERTAIN_DISEASE_NAME,
+    CROP_CONFIDENCE_THRESHOLD,
+)
 from src.preprocessing.transforms import get_val_test_transforms
 from src.models.classifier import TomatoDiseaseClassifier
+
 
 class DiseaseInferencePipeline:
     """
     Production-ready Inference Engine for Crop Disease Image Classification.
     Uses the exact same preprocessing transforms as validation & evaluation pipelines.
     Handles image bytes, file paths, and PIL Images with full error checking.
+    Includes confidence thresholding to flag possible non-target crop mismatch.
     """
     
     def __init__(self, model_path: Union[str, Path] = Config.DEFAULT_MODEL_SAVE_PATH, device: str = None):
@@ -103,6 +110,9 @@ class DiseaseInferencePipeline:
                 - predicted_disease (str)
                 - confidence (float)
                 - class_probabilities (Dict[str, float])
+                - possible_crop_mismatch (bool)
+                - mismatch_warning (Optional[str])
+                - raw_predicted_disease (str)
         """
         if self.model is None:
             raise RuntimeError("Model is not initialized or loaded.")
@@ -115,20 +125,33 @@ class DiseaseInferencePipeline:
             probs = F.softmax(logits, dim=1).squeeze(0)
             
         top_prob, top_idx = torch.max(probs, dim=0)
+        conf_val = round(float(top_prob.item()), 4)
+        raw_disease = self.class_names[top_idx.item()]
         
         prob_dict = {
             self.class_names[i]: round(float(probs[i].item()), 4)
             for i in range(len(self.class_names))
         }
         
+        # Check for crop mismatch / low confidence threshold
+        mismatch_info = check_crop_mismatch(conf_val, threshold=CROP_CONFIDENCE_THRESHOLD)
+        is_mismatch = mismatch_info["possible_crop_mismatch"]
+        
+        display_disease = UNCERTAIN_DISEASE_NAME if is_mismatch else raw_disease
+        
         return {
             "crop": self.crop_name,
-            "predicted_disease": self.class_names[top_idx.item()],
-            "confidence": round(float(top_prob.item()), 4),
-            "class_probabilities": prob_dict
+            "predicted_disease": display_disease,
+            "raw_predicted_disease": raw_disease,
+            "confidence": conf_val,
+            "class_probabilities": prob_dict,
+            "possible_crop_mismatch": is_mismatch,
+            "mismatch_warning": mismatch_info["mismatch_warning"],
         }
 
+
 _pipeline_instance = None
+
 
 def get_inference_pipeline(model_path: Union[str, Path] = Config.DEFAULT_MODEL_SAVE_PATH) -> DiseaseInferencePipeline:
     """Singleton getter for inference pipeline."""
