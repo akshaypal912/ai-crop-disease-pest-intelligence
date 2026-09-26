@@ -140,6 +140,7 @@ html, body, [class*="css"] {
 /* Disease card */
 .disease-card   { border-left: 5px solid #3b82f6; }
 .disease-healthy { border-left: 5px solid #22c55e; }
+.disease-uncertain { border-left: 5px solid #f97316; background: #fff7ed; }
 
 /* Factor badge */
 .factor-badge {
@@ -423,17 +424,45 @@ def main():
         severity_obj = report.get("severity", {})
         risk_obj = report.get("risk", {})
         pests_list = report.get("pests", [])
+        
+        # Extract prediction status
+        prediction_status = disease_obj.get("prediction_status", "UNKNOWN")
+        status_message = disease_obj.get("status_message", "")
 
         st.session_state.analysis_history.insert(0, {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "filename": uploaded_file.name,
-            "disease": disease_obj.get("name", "Unknown"),
+            "disease": disease_obj.get("name") or "Uncertain",
             "confidence": disease_obj.get("confidence", 0.0),
-            "severity": severity_obj.get("level", "Unknown"),
+            "prediction_status": prediction_status,
+            "severity": severity_obj.get("level") or "N/A",
             "risk_level": risk_obj.get("risk_level", "Unknown"),
             "risk_score": risk_obj.get("risk_score", 0.0),
             "pests_count": len(pests_list),
         })
+        
+        # ── UNCERTAINTY WARNING BANNER (if diagnosis uncertain) ────────────────
+        if prediction_status in ["UNSUPPORTED_OR_UNCERTAIN", "INVALID_IMAGE"]:
+            st.markdown(f"""
+            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
+                        border-left: 5px solid #f59e0b; 
+                        padding: 20px 24px; 
+                        border-radius: 12px; 
+                        margin-bottom: 24px;
+                        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);">
+                <h3 style="color: #92400e; margin: 0 0 12px 0; font-size: 1.3rem;">
+                    ⚠️ Diagnosis Uncertain
+                </h3>
+                <p style="color: #78350f; margin: 0 0 8px 0; font-size: 1.05rem; font-weight: 500;">
+                    {status_message}
+                </p>
+                <p style="color: #92400e; margin: 0; font-size: 0.95rem;">
+                    <strong>What to do:</strong> Upload clearer images with better lighting, 
+                    focus on symptomatic leaf areas, or consult a local agricultural extension agent 
+                    for professional diagnosis.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
 
         # ── 1. Alert Banner (Prominent at top) ───────────────────────────────
         alert_obj = report.get("alert", {})
@@ -461,16 +490,29 @@ def main():
         # ── 2. Crop Health Summary Metrics ───────────────────────────────────
         st.subheader("3. Crop Health Report")
 
-        disease_name = disease_obj.get("name", "Unknown")
+        disease_name = disease_obj.get("name") or "Uncertain"
         conf_val = disease_obj.get("confidence", 0.0)
         is_healthy = (disease_name == "Healthy")
+        is_uncertain = prediction_status in ["UNSUPPORTED_OR_UNCERTAIN", "INVALID_IMAGE"]
 
-        disease_css = "disease-healthy" if is_healthy else "disease-card"
-        disease_icon = "✅" if is_healthy else "⚠️"
+        # Dynamic styling based on status
+        if is_uncertain:
+            disease_css = "disease-uncertain"
+            disease_icon = "❓"
+            confidence_style = "background: #fff7ed; border: 2px solid #fed7aa;"
+        elif is_healthy:
+            disease_css = "disease-healthy"
+            disease_icon = "✅"
+            confidence_style = ""
+        else:
+            disease_css = "disease-card"
+            disease_icon = "⚠️"
+            confidence_style = ""
 
-        sev_level = severity_obj.get("level", "Unknown")
-        sev_pct = severity_obj.get("affected_area_percentage")
-        sev_css, sev_emoji = severity_style(sev_level)
+        sev_level = severity_obj.get("level") or "N/A"
+        sev_pct = severity_obj.get("visible_affected_area_percentage")
+        sev_status = severity_obj.get("status", "UNAVAILABLE")
+        sev_css, sev_emoji = severity_style(sev_level) if sev_level != "N/A" else ("sev-unknown", "⚪")
 
         risk_level = risk_obj.get("risk_level", "Unknown")
         risk_score = risk_obj.get("risk_score", 0.0)
@@ -479,39 +521,68 @@ def main():
         c1, c2, c3, c4 = st.columns(4)
 
         with c1:
+            disease_display = disease_name if not is_uncertain else "Uncertain"
+            sci_name = disease_obj.get('scientific_name') if not is_uncertain else "Diagnosis unavailable"
             st.markdown(f"""
             <div class="intel-card {disease_css}">
                 <div class="card-label">🦠 Disease</div>
-                <div class="card-value">{disease_icon} {disease_name}</div>
-                <div class="card-sub">{disease_obj.get('scientific_name', 'Tomato Pathogen')}</div>
+                <div class="card-value">{disease_icon} {disease_display}</div>
+                <div class="card-sub">{sci_name or 'Tomato Pathogen'}</div>
+                {'<div class="proto-badge" style="margin-top: 8px;">UNCERTAIN</div>' if is_uncertain else ''}
             </div>
             """, unsafe_allow_html=True)
 
         with c2:
+            conf_display = f"{conf_val * 100:.1f}%"
+            conf_label = "Model confidence" if not is_uncertain else "⚠️ Below threshold"
             st.markdown(f"""
-            <div class="intel-card">
+            <div class="intel-card" style="{confidence_style}">
                 <div class="card-label">📊 Confidence</div>
-                <div class="card-value">{conf_val * 100:.1f}%</div>
-                <div class="card-sub">Model diagnostic certainty</div>
+                <div class="card-value">{conf_display}</div>
+                <div class="card-sub">{conf_label}</div>
             </div>
             """, unsafe_allow_html=True)
 
         with c3:
-            sev_pct_str = f"{sev_pct:.1f}%" if sev_pct is not None else "N/A"
+            # Handle new severity format with status
+            if sev_status == "UNRELIABLE":
+                sev_display = "Unreliable"
+                sev_pct_str = "Diagnosis uncertain"
+                sev_badge = "UNRELIABLE"
+            elif sev_status == "UNAVAILABLE":
+                sev_display = "Unavailable"
+                sev_pct_str = "Analysis unavailable"
+                sev_badge = "N/A"
+            else:
+                sev_display = sev_level
+                sev_pct_str = f"~{sev_pct:.1f}% affected" if sev_pct is not None else "N/A"
+                sev_badge = "PROTOTYPE"
+            
             st.markdown(f"""
             <div class="intel-card {sev_css}">
-                <div class="card-label">🔬 Severity <span class="proto-badge">PROTOTYPE</span></div>
-                <div class="card-value">{sev_emoji} {sev_level}</div>
-                <div class="card-sub">~{sev_pct_str} affected leaf area</div>
+                <div class="card-label">🔬 Severity <span class="proto-badge">{sev_badge}</span></div>
+                <div class="card-value">{sev_emoji} {sev_display}</div>
+                <div class="card-sub">{sev_pct_str}</div>
             </div>
             """, unsafe_allow_html=True)
 
         with c4:
+            # Check if risk assessment has insufficient data
+            risk_status = risk_obj.get("status", "AVAILABLE")
+            if risk_status == "INSUFFICIENT_DATA":
+                risk_display = "Insufficient Data"
+                risk_sub = "Confident diagnosis required"
+                risk_badge = "UNAVAILABLE"
+            else:
+                risk_display = risk_level
+                risk_sub = f"Risk Score: {risk_score:.2f} / 1.00"
+                risk_badge = "PROTOTYPE"
+            
             st.markdown(f"""
             <div class="intel-card {risk_css}">
-                <div class="card-label">⚠️ Risk Level <span class="proto-badge">PROTOTYPE</span></div>
-                <div class="card-value">{risk_emoji} {risk_level}</div>
-                <div class="card-sub">Risk Score: {risk_score:.2f} / 1.00</div>
+                <div class="card-label">⚠️ Risk Level <span class="proto-badge">{risk_badge}</span></div>
+                <div class="card-value">{risk_emoji} {risk_display}</div>
+                <div class="card-sub">{risk_sub}</div>
             </div>
             """, unsafe_allow_html=True)
 
