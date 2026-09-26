@@ -9,9 +9,11 @@ Guiding Principles:
 2. Promotes Integrated Pest Management (IPM), cultural controls, sanitation, and scouting.
 3. Clearly references reputable agricultural extension sources where applicable.
 4. Advises certified agronomist/extension consultation for elevated severity or critical risk.
+5. Data-conscious: Withholds disease-specific recommendations when diagnosis is uncertain.
 """
 
 from typing import List, Dict, Any, Optional
+from src.utils.prediction_status import PredictionStatus, should_provide_diagnosis
 
 # Reliable agricultural guidance database for diseases
 DISEASE_RECOMMENDATIONS = {
@@ -172,16 +174,18 @@ def generate_recommendations(
     severity: Optional[Dict[str, Any]] = None,
     weather: Optional[Dict[str, Any]] = None,
     risk_level: Optional[str] = None,
+    prediction_status: Optional[PredictionStatus] = None,
 ) -> List[Dict[str, str]]:
     """Generate structured agricultural recommendations based on comprehensive contextual cues.
 
     Parameters:
         crop: Target crop name (e.g., "Tomato").
-        disease: Detected disease class name.
+        disease: Detected disease class name (may be None if uncertain).
         pests: List of detected pest dictionaries with 'pest', 'confidence', 'bounding_box'.
         severity: Severity result dictionary (contains 'severity' or 'level', 'affected_area_percentage').
         weather: Weather observation dictionary (temperature, humidity, rainfall, etc.).
         risk_level: Overall computed risk level ("Low", "Medium", "High", "Critical").
+        prediction_status: Prediction status from inference pipeline.
 
     Returns:
         List of structured recommendation dicts:
@@ -198,7 +202,37 @@ def generate_recommendations(
                 item["source"] = source
             recs.append(item)
 
-    # 1. Disease-Specific Recommendations
+    # Check if diagnosis is uncertain
+    has_confident_diagnosis = prediction_status and should_provide_diagnosis(prediction_status)
+    
+    # If diagnosis is uncertain, provide guidance for improving diagnosis instead
+    if prediction_status and not has_confident_diagnosis:
+        _add_rec(
+            "Diagnosis Uncertain",
+            "The image quality or disease symptoms were insufficient for confident identification. "
+            "Upload clearer images with better lighting and focus on symptomatic areas.",
+            "AI Diagnostic System Quality Gate",
+        )
+        _add_rec(
+            "General Monitoring",
+            "Continue routine field scouting and note symptom progression. Collect multiple leaf samples "
+            "showing early, middle, and advanced symptoms for professional diagnosis.",
+            "Integrated Pest Management Field Guide",
+        )
+        _add_rec(
+            "Expert Consultation",
+            "For persistent or worsening symptoms, consult a local certified agronomist or agricultural "
+            "extension agent with physical plant samples for laboratory diagnosis.",
+            "National Agricultural Extension Service",
+        )
+        _add_rec(
+            "Disclaimer",
+            "NOTICE: Recommendations are general informational guidance. Always consult local certified agronomists "
+            "and adhere to regional regulations before applying treatments.",
+        )
+        return recs
+
+    # 1. Disease-Specific Recommendations (only if diagnosis is confident)
     if disease and disease in DISEASE_RECOMMENDATIONS:
         for r in DISEASE_RECOMMENDATIONS[disease]:
             _add_rec(r["category"], r["message"], r.get("source"))
