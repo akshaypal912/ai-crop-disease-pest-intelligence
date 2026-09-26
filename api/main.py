@@ -16,10 +16,11 @@ from src.inference.pipeline import get_inference_pipeline
 from src.knowledge.disease_kb import get_knowledge_base
 from src.severity.estimator import estimate_severity
 from src.weather.service import get_weather_service
-from src.risk_engine.engine import compute_risk
+from src.risk_engine.engine import compute_risk, compute_risk_with_validation
 from src.inference.pest.pipeline import get_pest_pipeline
 from src.recommendations import generate_recommendations
-from src.alerts import generate_alert
+from src.alerts import generate_alert, generate_alert_with_validation
+from src.utils.prediction_status import PredictionStatus
 
 app = FastAPI(
     title="AI Crop Disease & Pest Intelligence Platform API",
@@ -55,8 +56,10 @@ class HealthResponse(BaseModel):
 
 
 class DiseaseResult(BaseModel):
-    name: str
+    name: Optional[str]  # May be None if uncertain
     confidence: float
+    prediction_status: str  # Status enum name
+    status_message: Optional[str] = None  # Human-readable status explanation
     class_probabilities: Dict[str, float] = {}
     scientific_name: Optional[str] = None
     symptoms: List[str] = []
@@ -67,10 +70,11 @@ class DiseaseResult(BaseModel):
 
 
 class SeverityResult(BaseModel):
-    level: str = "Unknown"                          # Low | Moderate | High | Unknown
-    affected_area_percentage: Optional[float] = None
-    estimation_method: Optional[str] = None
-    prototype_disclaimer: Optional[str] = None
+    status: str = "UNAVAILABLE"                        # PROTOTYPE | UNRELIABLE | UNAVAILABLE
+    level: Optional[str] = None                        # Low | Moderate | High | None
+    visible_affected_area_percentage: Optional[float] = None
+    method: Optional[str] = None
+    message: Optional[str] = None
 
 
 class PestDetectionItem(BaseModel):
@@ -232,12 +236,19 @@ async def predict_crop_intelligence(
             detail=f"Disease inference execution failure: {str(err)}"
         )
 
-    predicted_disease = inference_result["predicted_disease"]
+    # Extract prediction status and disease info
+    predicted_disease = inference_result.get("predicted_disease")  # May be None
     confidence = inference_result["confidence"]
+    prediction_status = inference_result["prediction_status"]  # PredictionStatus enum
+    status_message = inference_result.get("status_message", "")
 
-    # 5. Retrieve Knowledge Base Information
+    # 5. Retrieve Knowledge Base Information (only if diagnosis is confident)
     kb = get_knowledge_base()
-    disease_info = kb.get_disease_info(predicted_disease)
+    if predicted_disease:
+        disease_info = kb.get_disease_info(predicted_disease)
+    else:
+        disease_info = {}
+    
     preventive_info = (
         disease_info.get("preventive_measures", []) +
         disease_info.get("general_management_practices", [])
@@ -246,8 +257,16 @@ async def predict_crop_intelligence(
     disease_result = DiseaseResult(
         name=predicted_disease,
         confidence=confidence,
-        class_probabilities=inference_result["class_probabilities"],
-        scientific_name=disease_info.get("scientific_name", "N/A"),
+        prediction_status=prediction_status.name,
+        status_message=status_message,
+        class_probabilities=inference_result.get("class_probabilities", {}),
+        scientific_name=disease_info.get("scientific_name", "N/A") if predicted_disease else None,
+        symptoms=disease_info.get("symptoms", []),
+        general_causes=disease_info.get("general_causes", []),
+        favorable_conditions=disease_info.get("favorable_conditions", []),
+        general_preventive_information=preventive_info,
+        disclaimer=disease_info.get("disclaimer", ""),
+    )
         symptoms=disease_info.get("symptoms", []),
         general_causes=disease_info.get("general_causes", []),
         favorable_conditions=disease_info.get("favorable_conditions", []),
@@ -255,22 +274,21 @@ async def predict_crop_intelligence(
         disclaimer=disease_info.get("disclaimer", ""),
     )
 
-    # 6. Severity Estimation (prototype — always attempted safely)
+    # 6. Severity Estimation (status-aware — skips when diagnosis uncertain)
     try:
-        severity_raw = estimate_severity(image_bytes, predicted_disease)
-        sev_level = severity_raw.get("severity", "Unknown")
-        severity_result = SeverityResult(
-            level=sev_level,
-            affected_area_percentage=severity_raw.get("affected_area_percentage"),
-            estimation_method=severity_raw.get("estimation_method", "opencv_hsv_colour_segmentation"),
-            prototype_disclaimer=severity_raw.get("prototype_disclaimer", ""),
+        severity_raw = estimate_severity(
+            image_bytes, 
+            predicted_disease, 
+            prediction_status=prediction_status
         )
-    except Exception:
+        severity_result = SeverityResult(**severity_raw)
+    except Exception as sev_err:
         severity_result = SeverityResult(
-            level="Unknown",
-            affected_area_percentage=None,
-            estimation_method="error",
-            prototype_disclaimer="Severity estimation could not be completed.",
+            status="UNAVAILABLE",
+            level=None,
+            visible_affected_area_percentage=None,
+            method="error",
+            message=f"Severity estimation error: {str(sev_err)}",
         )
 
     # 7. Weather Context (optional — gracefully fallback if unavailable)
@@ -287,12 +305,14 @@ async def predict_crop_intelligence(
         weather_result = _build_weather_result(raw_weather)
         weather_for_risk = raw_weather
 
-    # 8. Contextual Risk Assessment
+    # 8. Contextual Risk Assessment (status-aware with validation)
     try:
-        risk_dict = compute_risk(
+        risk_dict = compute_risk_with_validation(
             disease=predicted_disease,
             confidence=confidence,
-            severity_pct=severity_result.affected_area_percentage,
+            prediction_status=prediction_status,
+            severity_pct=severity_result.visible_affected_area_percentage,
+            weather_available=weather_for_risk.get("weather_available", False),
             temperature_c=weather_for_risk.get("temperature_c"),
             humidity_pct=weather_for_risk.get("humidity_pct"),
             rainfall_mm=weather_for_risk.get("rainfall_mm"),
@@ -327,7 +347,7 @@ async def predict_crop_intelligence(
         detected_pests_list = []
         pests_for_recs = []
 
-    # 10. Structured Recommendation Engine
+    # 10. Structured Recommendation Engine (status-aware)
     try:
         raw_recs = generate_recommendations(
             crop=inference_result.get("crop", Config.CROP_NAME),
@@ -336,6 +356,7 @@ async def predict_crop_intelligence(
             severity=severity_result.model_dump(),
             weather=weather_result.model_dump() if weather_result else None,
             risk_level=risk_result.risk_level,
+            prediction_status=prediction_status,
         )
         recommendations_list = [RecommendationItem(**r) for r in raw_recs]
     except Exception:
@@ -347,9 +368,12 @@ async def predict_crop_intelligence(
             )
         ]
 
-    # 11. Real-Time Alert Engine
+    # 11. Real-Time Alert Engine (status-aware with suppression)
     try:
-        alert_dict = generate_alert(risk_result.model_dump())
+        alert_dict = generate_alert_with_validation(
+            risk_result.model_dump(),
+            prediction_status=prediction_status
+        )
         alert_result = AlertResult(**alert_dict)
     except Exception:
         alert_result = AlertResult(active=False, severity=None, title=None, reasons=[])
