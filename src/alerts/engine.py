@@ -3,9 +3,15 @@
 Evaluates contextual risk outcomes to determine whether an actionable alert
 should be raised. Raises active alerts for "High" and "Critical" risk levels,
 summarising key contributing reasons from the risk assessment.
+
+Key Behavior:
+- Suppresses alerts when diagnosis is uncertain or evidence is insufficient
+- Only raises alerts for confident, high-risk assessments
+- Provides clear messaging about why alerts are or aren't triggered
 """
 
 from typing import Dict, Any, List, Optional, Union
+from src.utils.prediction_status import PredictionStatus, should_provide_diagnosis
 
 
 def generate_alert(risk: Union[Dict[str, Any], Any, None]) -> Dict[str, Any]:
@@ -72,3 +78,76 @@ def generate_alert(risk: Union[Dict[str, Any], Any, None]) -> Dict[str, Any]:
         }
 
     return inactive_alert
+
+
+def generate_alert_with_validation(
+    risk: Union[Dict[str, Any], Any, None],
+    prediction_status: Optional[PredictionStatus] = None,
+) -> Dict[str, Any]:
+    """Generate an alert with data sufficiency validation.
+    
+    Suppresses alerts when:
+    - Diagnosis is uncertain or invalid
+    - Risk assessment is unavailable due to insufficient data
+    
+    Parameters:
+        risk: Risk assessment dict or object containing 'risk_level' and 'factors'.
+              May be None if risk evaluation was unavailable.
+        prediction_status: Prediction status from inference pipeline.
+        
+    Returns:
+        Dict with keys:
+            - active: bool (True only for confident High/Critical risk)
+            - severity: Optional[str] ("High" | "Critical" | None)
+            - title: Optional[str]
+            - reasons: List[str]
+            - suppressed: bool (True if alert was suppressed due to uncertainty)
+            - suppression_reason: Optional[str]
+    """
+    inactive_alert: Dict[str, Any] = {
+        "active": False,
+        "severity": None,
+        "title": None,
+        "reasons": [],
+        "suppressed": False,
+        "suppression_reason": None,
+    }
+    
+    # Check if diagnosis is uncertain - suppress alerts
+    if prediction_status and not should_provide_diagnosis(prediction_status):
+        return {
+            "active": False,
+            "severity": None,
+            "title": None,
+            "reasons": [],
+            "suppressed": True,
+            "suppression_reason": (
+                f"Alert suppressed: Diagnosis uncertain ({prediction_status.name}). "
+                "Alerts are only triggered for confident disease identifications."
+            ),
+        }
+    
+    # Check if risk assessment indicates insufficient data
+    if isinstance(risk, dict):
+        risk_status = risk.get("status")
+        if risk_status == "INSUFFICIENT_DATA":
+            return {
+                "active": False,
+                "severity": None,
+                "title": None,
+                "reasons": [],
+                "suppressed": True,
+                "suppression_reason": (
+                    "Alert suppressed: Risk assessment unavailable due to insufficient data. "
+                    "Alerts require confident diagnosis and sufficient environmental context."
+                ),
+            }
+    
+    # Use standard alert generation logic for confident assessments
+    standard_alert = generate_alert(risk)
+    
+    # Add suppression tracking (not suppressed if we reached here)
+    standard_alert["suppressed"] = False
+    standard_alert["suppression_reason"] = None
+    
+    return standard_alert
