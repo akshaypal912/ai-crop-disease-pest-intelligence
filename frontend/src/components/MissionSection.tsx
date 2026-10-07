@@ -24,11 +24,11 @@ export const MissionSection: React.FC<MissionSectionProps> = ({ onDetect }) => {
 
           <div className="lg:col-span-5 lg:pt-10 space-y-8">
             <p className="text-[#F6F1E6]/88 text-[16px] leading-relaxed font-light">
-              CropSense reads the subtle language of leaves, canopies and soil. We pair realistic field observation with careful AI analysis so growers can act earlier — with clarity, not guesswork.
+              FarmEye AI reads the subtle language of leaves, canopies and soil. We pair realistic field observation with careful AI analysis so growers can act earlier — with clarity, not guesswork.
             </p>
             <button
               onClick={onDetect}
-              className="inline-flex items-center px-6 py-2.5 rounded-full bg-[#E8D5A3] text-[#1C2A1A] text-sm font-semibold hover:bg-white transition-colors"
+              className="inline-flex items-center px-6 py-2.5 rounded-full bg-[#E8D5A3] text-ink-strong text-sm font-semibold hover:bg-white transition-colors"
             >
               Begin a Field Scan
             </button>

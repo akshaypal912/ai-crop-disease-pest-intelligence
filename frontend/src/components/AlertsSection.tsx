@@ -33,7 +33,7 @@ export const AlertsSection: React.FC<AlertsSectionProps> = ({ alerts = [], onAct
   };
 
   return (
-    <section id="alerts" className="py-16 px-4 sm:px-6 lg:px-8 bg-[#EBF1EC] bg-organic-texture border-t border-[#CFDAD2]">
+    <section id="alerts" className="py-16 px-4 sm:px-6 lg:px-8 bg-surface-alt bg-organic-texture border-t border-border-soft">
       <div className="max-w-5xl mx-auto space-y-8">
         
         {/* Section Header */}
@@ -48,17 +48,17 @@ export const AlertsSection: React.FC<AlertsSectionProps> = ({ alerts = [], onAct
             </h2>
           </div>
 
-          <span className="text-xs text-[#43544A] font-bold">
+          <span className="text-xs text-ink-secondary font-bold">
             Updated in real-time from microclimate telemetry
           </span>
         </div>
 
         {/* Alerts List */}
         {alerts.length === 0 ? (
-          <div className="p-8 rounded-3xl bg-[#F6F3EC] border border-[#CFDAD2] text-center space-y-2">
+          <div className="p-8 rounded-3xl bg-surface-elevated border border-border-soft text-center space-y-2">
             <Bell className="w-8 h-8 text-[#10B981] mx-auto opacity-60" />
             <h3 className="text-base font-extrabold text-[#0F3322]">No Active Field Alerts</h3>
-            <p className="text-xs text-[#43544A] font-medium">
+            <p className="text-xs text-ink-secondary font-medium">
               All monitored crop plots are within safe microclimate and pathogen risk thresholds.
             </p>
           </div>
@@ -84,11 +84,11 @@ export const AlertsSection: React.FC<AlertsSectionProps> = ({ alerts = [], onAct
                           {alt.severity}
                         </span>
                         {alt.cropType && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-white text-[#0F3322] border border-[#CFDAD2]">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-white text-[#0F3322] border border-border-soft">
                             {alt.cropType} Crop
                           </span>
                         )}
-                        <span className="text-[11px] text-[#43544A] font-bold">
+                        <span className="text-[11px] text-ink-secondary font-bold">
                           {alt.timestamp}
                         </span>
                       </div>
@@ -105,7 +105,7 @@ export const AlertsSection: React.FC<AlertsSectionProps> = ({ alerts = [], onAct
                   {onActionClick && (
                     <button
                       onClick={() => onActionClick(alt)}
-                      className="px-4 py-2 rounded-full bg-white border border-[#CFDAD2] text-[#0F3322] text-xs font-extrabold hover:bg-[#F6F3EC] transition-all shrink-0 flex items-center gap-1.5 shadow-sm"
+                      className="px-4 py-2 rounded-full bg-white border border-border-soft text-[#0F3322] text-xs font-extrabold hover:bg-surface-elevated transition-all shrink-0 flex items-center gap-1.5 shadow-sm"
                     >
                       <span>Take Action</span>
                       <ArrowRight className="w-3.5 h-3.5 text-[#10B981]" />

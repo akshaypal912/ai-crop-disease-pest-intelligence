@@ -8,14 +8,14 @@ export const RiskCard: React.FC<{
   const isDataSufficient = environment.isDataSufficient && risk.isDataSufficient;
 
   return (
-    <article className="border-t border-[#DDD6C4] pt-8 space-y-6">
-      <p className="text-[11px] tracking-[0.28em] uppercase text-[#6E7A4E]">Microclimate & risk</p>
-      <h3 className="font-display text-2xl text-[#161A12]">
+    <article className="border-t border-border pt-8 space-y-6">
+      <p className="text-[11px] tracking-[0.28em] uppercase text-olive">Microclimate & risk</p>
+      <h3 className="font-display text-2xl text-ink">
         {isDataSufficient ? `${risk.riskLevel} field risk` : 'Weather data incomplete'}
       </h3>
 
       {!isDataSufficient ? (
-        <p className="text-[#5A6150] font-light">{risk.explanation}</p>
+        <p className="text-ink-muted font-light">{risk.explanation}</p>
       ) : (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
@@ -24,12 +24,12 @@ export const RiskCard: React.FC<{
             <Metric label="Rain" value={environment.rainfall != null ? `${environment.rainfall} mm` : '—'} />
             <Metric label="Leaf wetness" value={environment.leafWetnessHours != null ? `${environment.leafWetnessHours} h` : '—'} />
           </div>
-          <ul className="space-y-2 text-sm text-[#5A6150] font-light">
+          <ul className="space-y-2 text-sm text-ink-muted font-light">
             {risk.contributingFactors.map((factor) => (
               <li key={factor}>{factor}</li>
             ))}
           </ul>
-          {risk.explanation && <p className="text-sm text-[#5A6150] font-light">{risk.explanation}</p>}
+          {risk.explanation && <p className="text-sm text-ink-muted font-light">{risk.explanation}</p>}
         </>
       )}
     </article>
@@ -39,7 +39,7 @@ export const RiskCard: React.FC<{
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[11px] uppercase tracking-widest text-[#6E7A4E]">{label}</p>
+      <p className="text-[11px] uppercase tracking-widest text-olive">{label}</p>
       <p className="font-display text-2xl mt-1">{value}</p>
     </div>
   );

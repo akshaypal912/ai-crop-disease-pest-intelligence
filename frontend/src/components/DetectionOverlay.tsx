@@ -26,7 +26,7 @@ export const DetectionOverlay: React.FC<DetectionOverlayProps> = ({
     <div className="space-y-4">
       
       {/* Top Action Bar: Toggle & Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#DDD6C4]">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-border">
         
         {/* Toggle Mode Segmented Control */}
         <div className="flex items-center gap-1">
@@ -34,7 +34,7 @@ export const DetectionOverlay: React.FC<DetectionOverlayProps> = ({
             type="button"
             onClick={() => setShowOverlay(false)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-all ${
-              !showOverlay ? 'bg-[#1C2A1A] text-[#F6F1E6]' : 'text-[#5A6150] border border-[#C9C0A8]'
+              !showOverlay ? 'bg-[#1C2A1A] text-[#F6F1E6]' : 'text-ink-muted border border-[#C9C0A8]'
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
@@ -45,7 +45,7 @@ export const DetectionOverlay: React.FC<DetectionOverlayProps> = ({
             type="button"
             onClick={() => setShowOverlay(true)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-all ${
-              showOverlay ? 'bg-[#1C2A1A] text-[#F6F1E6]' : 'text-[#5A6150] border border-[#C9C0A8]'
+              showOverlay ? 'bg-[#1C2A1A] text-[#F6F1E6]' : 'text-ink-muted border border-[#C9C0A8]'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -58,7 +58,7 @@ export const DetectionOverlay: React.FC<DetectionOverlayProps> = ({
           <button
             type="button"
             onClick={handleZoomIn}
-            className="p-2 text-[#1C2A1A] text-xs flex items-center gap-1"
+            className="p-2 text-ink-strong text-xs flex items-center gap-1"
             title="Zoom in image"
           >
             <ZoomIn className="w-3.5 h-3.5" />
@@ -68,7 +68,7 @@ export const DetectionOverlay: React.FC<DetectionOverlayProps> = ({
             <button
               type="button"
               onClick={handleResetZoom}
-              className="p-2 rounded-xl bg-white border border-[#CFDAD2] text-[#B65B55] hover:bg-[#FDF2F1] text-xs font-bold"
+              className="p-2 rounded-xl bg-white border border-border-soft text-[#B65B55] hover:bg-[#FDF2F1] text-xs font-bold"
               title="Reset Zoom"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -142,7 +142,7 @@ export const DetectionOverlay: React.FC<DetectionOverlayProps> = ({
       {/* Bounding Box Selection Cards list */}
       {showOverlay && allBoxes.length > 0 && (
         <div className="space-y-2 text-left">
-          <span className="text-[11px] uppercase tracking-[0.2em] text-[#6E7A4E] flex items-center gap-1.5">
+          <span className="text-[11px] uppercase tracking-[0.2em] text-olive flex items-center gap-1.5">
             <Tag className="w-3.5 h-3.5" />
             Detected AI Bounding Zones ({allBoxes.length})
           </span>
@@ -158,12 +158,12 @@ export const DetectionOverlay: React.FC<DetectionOverlayProps> = ({
                   className={`px-3 py-1.5 rounded-full border text-xs flex items-center gap-2 transition-all ${
                     isSelected
                       ? 'bg-[#1C2A1A] text-[#F6F1E6] border-[#1C2A1A]'
-                      : 'bg-transparent text-[#1C2A1A] border-[#C9C0A8]'
+                      : 'bg-transparent text-ink-strong border-[#C9C0A8]'
                   }`}
                 >
                   <span className={`w-2 h-2 rounded-full ${box.type === 'pest' ? 'bg-[#6E7A4E]' : 'bg-[#B65B55]'}`} />
                   <span>{box.label}</span>
-                  <span className="text-[10px] text-[#6E7A4E]">{box.confidence}%</span>
+                  <span className="text-[10px] text-olive">{box.confidence}%</span>
                 </button>
               );
             })}

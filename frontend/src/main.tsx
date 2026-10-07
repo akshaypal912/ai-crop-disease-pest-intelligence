@@ -3,11 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { FarmerLanguageProvider } from './i18n/FarmerLanguageContext.tsx'
+import { ThemeProvider } from './theme/ThemeContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <FarmerLanguageProvider>
-      <App />
-    </FarmerLanguageProvider>
+    <ThemeProvider>
+      <FarmerLanguageProvider>
+        <App />
+      </FarmerLanguageProvider>
+    </ThemeProvider>
   </StrictMode>,
 )

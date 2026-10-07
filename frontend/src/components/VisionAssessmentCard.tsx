@@ -12,15 +12,15 @@ export function VisionAssessmentCard({ vision }: { vision: VisionAssessment | nu
 
   return (
 
-    <article className="border-t border-[#DDD6C4] pt-8 space-y-4">
+    <article className="border-t border-border pt-8 space-y-4">
 
-      <p className="text-[11px] tracking-[0.28em] uppercase text-[#6E7A4E]">
+      <p className="text-[11px] tracking-[0.28em] uppercase text-olive">
 
         {localize('AI visual assessment')}
 
       </p>
 
-      <p className="text-sm text-[#5A6150] font-light">
+      <p className="text-sm text-ink-muted font-light">
 
         {localize(
 
@@ -32,7 +32,7 @@ export function VisionAssessmentCard({ vision }: { vision: VisionAssessment | nu
 
       {!vision ? (
 
-        <p className="font-display text-xl text-[#161A12]">
+        <p className="font-display text-xl text-ink">
 
           {localize('AI visual assessment unavailable.')}
 
@@ -44,7 +44,7 @@ export function VisionAssessmentCard({ vision }: { vision: VisionAssessment | nu
 
           <p>
 
-            <span className="text-[#5A6150]">{localize('Likely crop:')} </span>
+            <span className="text-ink-muted">{localize('Likely crop:')} </span>
 
             <strong>{localize(vision.likely_crop || 'Not identified')}</strong>
 
@@ -52,7 +52,7 @@ export function VisionAssessmentCard({ vision }: { vision: VisionAssessment | nu
 
           <p>
 
-            <span className="text-[#5A6150]">{localize('Crop confidence (qualitative):')} </span>
+            <span className="text-ink-muted">{localize('Crop confidence (qualitative):')} </span>
 
             {localize(vision.crop_confidence || 'Unavailable')}
 
@@ -84,7 +84,7 @@ export function VisionAssessmentCard({ vision }: { vision: VisionAssessment | nu
 
           <ListBlock title={localize('Image quality notes')} items={vision.image_quality_notes} localize={localize} />
 
-          <p className="text-xs text-[#6E7A4E]">
+          <p className="text-xs text-olive">
 
             {vision.assessment_type}
 
@@ -128,11 +128,11 @@ function ListBlock({
 
     <div>
 
-      <p className="text-sm font-medium text-[#161A12] mb-1">{title}</p>
+      <p className="text-sm font-medium text-ink mb-1">{title}</p>
 
       {items?.length ? (
 
-        <ul className="list-disc pl-5 text-sm text-[#5A6150] font-light space-y-1">
+        <ul className="list-disc pl-5 text-sm text-ink-muted font-light space-y-1">
 
           {items.map((line) => (
 
@@ -144,7 +144,7 @@ function ListBlock({
 
       ) : (
 
-        <p className="text-sm text-[#5A6150] font-light">{localize('None noted.')}</p>
+        <p className="text-sm text-ink-muted font-light">{localize('None noted.')}</p>
 
       )}
 

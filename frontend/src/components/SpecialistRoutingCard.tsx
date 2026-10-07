@@ -34,19 +34,19 @@ export function SpecialistRoutingCard({ routing }: { routing: SpecialistRouting 
 
   return (
 
-    <article className="border-t border-[#DDD6C4] pt-8 space-y-3">
+    <article className="border-t border-border pt-8 space-y-3">
 
-      <p className="text-[11px] tracking-[0.28em] uppercase text-[#6E7A4E]">
+      <p className="text-[11px] tracking-[0.28em] uppercase text-olive">
 
         {localize('Specialist routing')}
 
       </p>
 
-      <h3 className="font-display text-2xl text-[#161A12]">{localize(headline)}</h3>
+      <h3 className="font-display text-2xl text-ink">{localize(headline)}</h3>
 
-      <p className="text-sm text-[#5A6150] font-light">{localize(detail)}</p>
+      <p className="text-sm text-ink-muted font-light">{localize(detail)}</p>
 
-      <p className="text-xs uppercase tracking-widest text-[#6E7A4E]">
+      <p className="text-xs uppercase tracking-widest text-olive">
 
         {localize('Status:')} {routing.routing_status} · {localize('Source:')} {routing.crop_source}
 

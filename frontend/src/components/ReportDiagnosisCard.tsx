@@ -32,29 +32,29 @@ export function ReportDiagnosisCard({ report }: { report: PredictionResponse }) 
 
   return (
 
-    <article className="border-t border-[#DDD6C4] pt-8 space-y-4">
+    <article className="border-t border-border pt-8 space-y-4">
 
-      <p className="text-[11px] tracking-[0.28em] uppercase text-[#6E7A4E]">
+      <p className="text-[11px] tracking-[0.28em] uppercase text-olive">
 
         {localize('Validated disease specialist')}
 
       </p>
 
-      <h2 className="font-display text-4xl text-[#161A12] leading-tight">{title}</h2>
+      <h2 className="font-display text-4xl text-ink leading-tight">{title}</h2>
 
       {d.scientific_name && d.name && (
 
-        <p className="italic text-[#5A6150]">{d.scientific_name}</p>
+        <p className="italic text-ink-muted">{d.scientific_name}</p>
 
       )}
 
-      <p className="text-sm text-[#5A6150]">
+      <p className="text-sm text-ink-muted">
 
         {localize('Status:')} <strong>{d.prediction_status}</strong>
 
       </p>
 
-      <p className="text-sm text-[#5A6150]">
+      <p className="text-sm text-ink-muted">
 
         {localize('Confidence:')} <strong>{formatOptionalPercent(d.confidence)}</strong>
 
@@ -62,7 +62,7 @@ export function ReportDiagnosisCard({ report }: { report: PredictionResponse }) 
 
       {sev.level && (
 
-        <p className="text-sm text-[#5A6150]">
+        <p className="text-sm text-ink-muted">
 
           {localize('Severity:')} {sev.level}
 
@@ -78,7 +78,7 @@ export function ReportDiagnosisCard({ report }: { report: PredictionResponse }) 
 
       {d.status_message && (
 
-        <p className="text-[#5A6150] font-light leading-relaxed">
+        <p className="text-ink-muted font-light leading-relaxed">
 
           {localize(neutralizeVisionProviderCopy(d.status_message))}
 

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Leaf, Menu, X } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
+import { ThemeToggle } from './ThemeToggle';
 import { useFarmerLanguage } from '../i18n/FarmerLanguageContext';
 
-export type AppPage = 'home' | 'detect' | 'result' | 'history' | 'dashboard';
+export type AppPage = 'home' | 'detect' | 'result' | 'history' | 'dashboard' | 'disease-detail';
 
 interface NavbarProps {
   activePage: AppPage;
@@ -43,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-      overHero ? 'bg-transparent' : 'bg-[#FBF7EE]/95 border-b border-[#DDD6C4] shadow-[0_8px_30px_rgba(18,25,16,0.06)] backdrop-blur-md'
+      overHero ? 'bg-transparent' : 'bg-surface/95 border-b border-border shadow-[0_8px_30px_rgba(18,25,16,0.06)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur-md'
     }`}>
       <div className="max-w-[1400px] mx-auto px-5 sm:px-8 h-[72px] flex items-center justify-between">
         <button
@@ -55,8 +56,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}>
             <Leaf className="w-5 h-5" />
           </span>
-          <span className={`font-display text-[22px] tracking-tight ${overHero ? 'text-white' : 'text-[#1C2A1A]'}`}>
-            CropSense
+          <span className={`font-display text-[22px] tracking-tight ${overHero ? 'text-white' : 'text-ink-strong'}`}>
+            FarmEye AI
           </span>
         </button>
 
@@ -70,7 +71,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className={`text-[13px] tracking-[0.14em] uppercase font-medium transition-colors ${
                   overHero
                     ? active ? 'text-[#E8D5A3]' : 'text-white/80 hover:text-white'
-                    : active ? 'text-[#4F5A38]' : 'text-[#5A6150] hover:text-[#1C2A1A]'
+                    : active ? 'text-[#4F5A38] dark:text-wheat' : 'text-ink-muted hover:text-ink-strong'
                 }`}
               >
                 {localize(item.label)}
@@ -79,11 +80,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle overHero={overHero} />
           <LanguageSelector overHero={overHero} />
           <span
             className={`hidden md:inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest ${
-              overHero ? 'text-white/80' : 'text-[#5A6150]'
+              overHero ? 'text-white/80' : 'text-ink-muted'
             }`}
             title={apiBaseUrl ? `API: ${apiBaseUrl}` : undefined}
           >
@@ -98,15 +100,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => onNavigate('detect')}
             className={`hidden sm:inline-flex items-center px-5 py-2 rounded-full text-[13px] font-semibold tracking-wide transition-all ${
               overHero
-                ? 'bg-[#E8D5A3] text-[#1C2A1A] hover:bg-white'
-                : 'bg-[#1C2A1A] text-[#F6F1E6] hover:bg-[#4F5A38]'
+                ? 'bg-[#E8D5A3] text-ink-strong hover:bg-white'
+                : 'bg-panel text-cream hover:bg-panel-muted'
             }`}
           >
             {localize('Detect Disease')}
           </button>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className={`lg:hidden p-2 rounded-full ${overHero ? 'text-white' : 'text-[#1C2A1A]'}`}
+            className={`lg:hidden p-2 rounded-full ${overHero ? 'text-white' : 'text-ink-strong'}`}
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -114,7 +116,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden bg-[#FBF7EE] border-t border-[#DDD6C4] px-5 py-4 space-y-1">
+        <div className="lg:hidden bg-surface border-t border-border px-5 py-4 space-y-1">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -122,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onNavigate(item.id);
                 setMobileOpen(false);
               }}
-              className="block w-full text-left px-3 py-2.5 text-sm font-medium text-[#1C2A1A]"
+              className="block w-full text-left px-3 py-2.5 text-sm font-medium text-ink-strong"
             >
               {localize(item.label)}
             </button>

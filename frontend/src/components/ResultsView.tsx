@@ -88,7 +88,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 
   return (
 
-    <div className="bg-[#FBF7EE] min-h-screen">
+    <div className="bg-surface min-h-screen">
 
       {translationWarning && (
 
@@ -142,7 +142,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 
               onClick={onAnalyzeAnother}
 
-              className="px-6 py-2.5 rounded-full bg-[#E8D5A3] text-[#1C2A1A] text-sm font-semibold"
+              className="px-6 py-2.5 rounded-full bg-[#E8D5A3] text-ink-strong text-sm font-semibold"
 
             >
 

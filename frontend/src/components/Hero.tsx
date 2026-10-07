@@ -1,6 +1,8 @@
 import React from 'react';
-import { Play } from 'lucide-react';
 import { IMAGES } from '../data/images';
+
+const HERO_VIDEO_EMBED_SRC =
+  'https://www.youtube.com/embed/cBMg2-qBVeM?start=31&rel=0&modestbranding=1';
 
 interface HeroProps {
   onDetect: () => void;
@@ -22,22 +24,22 @@ export const Hero: React.FC<HeroProps> = ({ onDetect, onExplore }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-end lg:items-center flex-1">
           <div className="lg:col-span-8">
             <h1 className="font-display text-[#F4E7C0] text-[56px] sm:text-[80px] lg:text-[108px] leading-[0.92] tracking-[-0.03em] max-w-4xl">
-              See What
+              See Your Crop.
               <br />
-              Your Crops
+              Understand Its
               <br />
-              Are Saying
+              Health.
             </h1>
           </div>
 
           <div className="lg:col-span-4 lg:justify-self-end lg:text-right max-w-sm lg:ml-auto space-y-6">
             <p className="text-white/85 text-[15px] sm:text-base leading-relaxed font-light">
-              AI-powered crop disease intelligence for faster, smarter and more informed farming.
+              FarmEye AI uses computer vision and intelligent risk analysis to help identify crop diseases and pests early.
             </p>
             <div className="flex flex-wrap gap-3 lg:justify-end">
               <button
                 onClick={onDetect}
-                className="px-6 py-2.5 rounded-full bg-[#F4E7C0] text-[#1C2A1A] text-sm font-semibold hover:bg-white transition-colors"
+                className="px-6 py-2.5 rounded-full bg-[#F4E7C0] text-ink-strong text-sm font-semibold hover:bg-white transition-colors"
               >
                 Detect Disease
               </button>
@@ -45,7 +47,7 @@ export const Hero: React.FC<HeroProps> = ({ onDetect, onExplore }) => {
                 onClick={onExplore}
                 className="px-6 py-2.5 rounded-full border border-white/40 text-white text-sm font-medium hover:bg-white/10 transition-colors"
               >
-                Explore CropSense
+                Explore FarmEye
               </button>
             </div>
           </div>
@@ -57,19 +59,15 @@ export const Hero: React.FC<HeroProps> = ({ onDetect, onExplore }) => {
             Field intelligence since harvest
           </div>
 
-          <div className="relative w-[220px] h-[148px] sm:w-[260px] sm:h-[170px] rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/20 animate-float self-end">
-            <img
-              src={IMAGES.harvestHands}
-              alt="Hands holding harvested grain"
-              className="w-full h-full object-cover"
+          <div className="relative w-full max-w-[220px] sm:max-w-[260px] aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/20 animate-float self-end">
+            <iframe
+              src={HERO_VIDEO_EMBED_SRC}
+              title="From field to diagnosis"
+              className="absolute inset-0 w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
             />
-            <div className="absolute inset-0 bg-black/25" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="w-11 h-11 rounded-full bg-white/90 text-[#1C2A1A] flex items-center justify-center">
-                <Play className="w-4 h-4 fill-current ml-0.5" />
-              </span>
-            </div>
-            <p className="absolute bottom-2 left-3 right-3 text-[10px] tracking-[0.12em] uppercase text-white/90">
+            <p className="absolute bottom-2 left-3 right-3 text-[10px] tracking-[0.12em] uppercase text-white/90 pointer-events-none drop-shadow-sm">
               From field to diagnosis
             </p>
           </div>

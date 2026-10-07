@@ -12,7 +12,7 @@ export const AboutSection: React.FC = () => {
   ];
 
   return (
-    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#EBF1EC] bg-organic-texture border-t border-[#CFDAD2]">
+    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-surface-alt bg-organic-texture border-t border-border-soft">
       <div className="max-w-5xl mx-auto space-y-12 text-left">
         
         {/* Section Header */}
@@ -22,9 +22,9 @@ export const AboutSection: React.FC = () => {
             <span>AI TRANSPARENCY & DECISION SUPPORT</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F3322] tracking-tight">
-            About CropSense AI Platform
+            About FarmEye AI Platform
           </h2>
-          <p className="text-base text-[#43544A] max-w-xl mx-auto font-medium">
+          <p className="text-base text-ink-secondary max-w-xl mx-auto font-medium">
             Combining deep neural vision backbones with microclimate telemetry to empower decision support in modern precision agriculture.
           </p>
         </div>
@@ -33,7 +33,7 @@ export const AboutSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           
           {/* Column 1: Core System Architecture */}
-          <div className="p-8 rounded-3xl bg-[#F6F3EC] border border-[#CFDAD2] space-y-4">
+          <div className="p-8 rounded-3xl bg-surface-elevated border border-border-soft space-y-4">
             <div className="w-10 h-10 rounded-2xl bg-[#0F3322] text-white flex items-center justify-center border border-[#16462D]">
               <Cpu className="w-5 h-5 text-[#E5C378]" />
             </div>
@@ -43,7 +43,7 @@ export const AboutSection: React.FC = () => {
             </h3>
 
             <p className="text-xs text-[#0D1611] leading-relaxed font-semibold">
-              CropSense AI utilizes convolutional backbones trained on over 120,000 expert-curated agricultural leaf specimens. The vision network extracts fine-grained spatial lesion geometries, leaf margin chlorosis, and insect vectors.
+              FarmEye AI utilizes convolutional backbones trained on over 120,000 expert-curated agricultural leaf specimens. The vision network extracts fine-grained spatial lesion geometries, leaf margin chlorosis, and insect vectors.
             </p>
 
             <ul className="space-y-2 text-xs text-[#0F3322] font-extrabold pt-2">
@@ -63,7 +63,7 @@ export const AboutSection: React.FC = () => {
           </div>
 
           {/* Column 2: Decision Support & Trust Principles */}
-          <div className="p-8 rounded-3xl bg-[#F6F3EC] border border-[#CFDAD2] space-y-4">
+          <div className="p-8 rounded-3xl bg-surface-elevated border border-border-soft space-y-4">
             <div className="w-10 h-10 rounded-2xl bg-[#0F3322] text-white flex items-center justify-center border border-[#16462D]">
               <ShieldCheck className="w-5 h-5 text-[#10B981]" />
             </div>
@@ -73,7 +73,7 @@ export const AboutSection: React.FC = () => {
             </h3>
 
             <p className="text-xs text-[#0D1611] leading-relaxed font-semibold">
-              CropSense AI is strictly positioned as a <strong>decision support platform</strong> to assist farmers and agronomists. It never fabricates certainty when image evidence or weather telemetry is insufficient.
+              FarmEye AI is strictly positioned as a <strong>decision support platform</strong> to assist farmers and agronomists. It never fabricates certainty when image evidence or weather telemetry is insufficient.
             </p>
 
             <div className="p-4 rounded-2xl bg-[#F7EFCF] border border-[#D4AF37]/60 flex items-start gap-3">
@@ -87,7 +87,7 @@ export const AboutSection: React.FC = () => {
         </div>
 
         {/* Supported Crops Grid Table */}
-        <div className="p-8 rounded-3xl bg-[#F6F3EC] border border-[#CFDAD2] space-y-4">
+        <div className="p-8 rounded-3xl bg-surface-elevated border border-border-soft space-y-4">
           <div className="flex items-center gap-2 text-xs font-extrabold text-[#0F3322] uppercase tracking-wider">
             <Sprout className="w-4 h-4 text-[#10B981]" />
             <span>Supported Commercial Crop Varieties & Pathogen Classes</span>
@@ -95,11 +95,11 @@ export const AboutSection: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {supportedCrops.map((c) => (
-              <div key={c.name} className="p-4 rounded-2xl bg-white border border-[#CFDAD2] space-y-1">
+              <div key={c.name} className="p-4 rounded-2xl bg-white border border-border-soft space-y-1">
                 <span className="text-xs font-extrabold text-[#0F3322] block">
                   {c.name}
                 </span>
-                <span className="text-[11px] text-[#43544A] block leading-snug font-semibold">
+                <span className="text-[11px] text-ink-secondary block leading-snug font-semibold">
                   {c.diseases}
                 </span>
               </div>

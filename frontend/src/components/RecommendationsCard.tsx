@@ -11,9 +11,9 @@ export const RecommendationsCard: React.FC<{ recommendations: Recommendation[] }
     activeTab === 'all' ? recommendations : recommendations.filter((r) => r.category === activeTab);
 
   return (
-    <article className="border-t border-[#DDD6C4] pt-8 space-y-6">
-      <p className="text-[11px] tracking-[0.28em] uppercase text-[#6E7A4E]">Field guidance</p>
-      <h3 className="font-display text-2xl text-[#161A12]">What to do next</h3>
+    <article className="border-t border-border pt-8 space-y-6">
+      <p className="text-[11px] tracking-[0.28em] uppercase text-olive">Field guidance</p>
+      <h3 className="font-display text-2xl text-ink">What to do next</h3>
 
       <div className="flex flex-wrap gap-2">
         {(['all', 'monitor', 'field_care', 'follow_up'] as const).map((tab) => (
@@ -22,7 +22,7 @@ export const RecommendationsCard: React.FC<{ recommendations: Recommendation[] }
             type="button"
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-1.5 rounded-full text-xs capitalize ${
-              activeTab === tab ? 'bg-[#1C2A1A] text-[#F6F1E6]' : 'border border-[#C9C0A8] text-[#1C2A1A]'
+              activeTab === tab ? 'bg-[#1C2A1A] text-[#F6F1E6]' : 'border border-[#C9C0A8] text-ink-strong'
             }`}
           >
             {tab.replace('_', ' ')}
@@ -44,9 +44,9 @@ export const RecommendationsCard: React.FC<{ recommendations: Recommendation[] }
               }
               className={`block w-full text-left ${done ? 'opacity-50' : ''}`}
             >
-              <p className="text-[11px] uppercase tracking-widest text-[#6E7A4E] mb-1">{rec.urgency} · {rec.category.replace('_', ' ')}</p>
+              <p className="text-[11px] uppercase tracking-widest text-olive mb-1">{rec.urgency} · {rec.category.replace('_', ' ')}</p>
               <h4 className={`font-display text-xl ${done ? 'line-through' : ''}`}>{rec.title}</h4>
-              <p className="text-sm text-[#5A6150] font-light mt-1">{rec.description}</p>
+              <p className="text-sm text-ink-muted font-light mt-1">{rec.description}</p>
             </button>
           );
         })}

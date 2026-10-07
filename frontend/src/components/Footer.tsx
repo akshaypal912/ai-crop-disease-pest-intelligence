@@ -13,10 +13,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         <div className="md:col-span-6 space-y-4">
           <div className="flex items-center gap-2">
             <Leaf className="w-5 h-5 text-[#E8D5A3]" />
-            <span className="font-display text-2xl">CropSense</span>
+            <span className="font-display text-2xl">FarmEye AI</span>
           </div>
           <p className="text-white/70 text-sm font-light max-w-md leading-relaxed">
-            Agricultural intelligence for growers who still believe the field should look like a field — even on a screen.
+            AI-Powered Crop Disease, Pest &amp; Risk Intelligence Platform — for growers who still believe the field should look like a field.
           </p>
         </div>
         <div className="md:col-span-3 space-y-3">
@@ -39,12 +39,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         <div className="md:col-span-3 space-y-3">
           <p className="text-[11px] tracking-[0.22em] uppercase text-[#E8D5A3]">Note</p>
           <p className="text-sm text-white/70 font-light leading-relaxed">
-            CropSense is a decision-support tool. Pair every scan with on-farm observation.
+            FarmEye AI is a decision-support tool. Pair every scan with on-farm observation.
           </p>
         </div>
       </div>
       <div className="border-t border-white/10 px-6 sm:px-10 py-6 text-xs text-white/50 flex flex-col sm:flex-row justify-between gap-2 max-w-[1400px] mx-auto">
-        <span>© {new Date().getFullYear()} CropSense</span>
+        <span>© {new Date().getFullYear()} FarmEye AI</span>
         <span>Agriculture first. Intelligence second.</span>
       </div>
     </footer>

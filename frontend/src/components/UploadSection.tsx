@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { Upload, X, Check, MapPin, Layers } from 'lucide-react';
-import type { GrowthStage, SampleCropImage } from '../types/crop';
+import { Upload, X, MapPin, Layers } from 'lucide-react';
+import type { GrowthStage } from '../types/crop';
 import type { CropDeclarationChoice } from '../types/session';
-import { SAMPLE_CROP_IMAGES } from '../services/cropSamples';
+import { DISEASE_LIBRARY } from '../data/diseaseLibrary';
+import { DiseaseCard } from './disease/DiseaseCard';
 import { PageBanner } from './PageBanner';
 import { IMAGES } from '../data/images';
 import { useFarmerLanguage } from '../i18n/FarmerLanguageContext';
@@ -18,6 +19,7 @@ interface UploadSectionProps {
   isAnalyzing: boolean;
   analysisError?: string | null;
   backendConnected?: boolean;
+  onOpenDisease: (slug: string) => void;
 }
 
 export const UploadSection: React.FC<UploadSectionProps> = ({
@@ -25,11 +27,11 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
   isAnalyzing,
   analysisError,
   backendConnected,
+  onOpenDisease,
 }) => {
   const { localize, ingestTranslations } = useFarmerLanguage();
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
-  const [selectedSample, setSelectedSample] = React.useState<SampleCropImage | null>(null);
   const [cropDeclaration, setCropDeclaration] = React.useState<CropDeclarationChoice>('auto');
   const [city, setCity] = React.useState('');
   const [growthStage, setGrowthStage] = React.useState<GrowthStage>('vegetative');
@@ -49,19 +51,11 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
   const handleFileChange = (file: File) => {
     if (!file.type.startsWith('image/')) return;
     setSelectedFile(file);
-    setSelectedSample(null);
     setPreviewUrl(URL.createObjectURL(file));
-  };
-
-  const handleSelectSample = (sample: SampleCropImage) => {
-    setSelectedSample(sample);
-    setSelectedFile(null);
-    setPreviewUrl(sample.imageUrl);
   };
 
   const handleClearImage = () => {
     setSelectedFile(null);
-    setSelectedSample(null);
     setPreviewUrl(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -69,12 +63,12 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!previewUrl) return;
-    const source = selectedFile ? selectedFile : (selectedSample ? selectedSample.imageUrl : previewUrl);
+    const source = selectedFile ?? previewUrl;
     onStartAnalysis(source, cropDeclaration, city, growthStage);
   };
 
   return (
-    <div className="bg-[#FBF7EE]">
+    <div className="bg-surface">
       <PageBanner
         kicker={localize('Detect')}
         title={localize('Bring the field to the lens')}
@@ -86,33 +80,28 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
 
       <div className="max-w-[1400px] mx-auto px-6 sm:px-10 py-16 lg:py-20 space-y-14">
         {backendConnected === false && (
-          <p className="border border-[#8A3E38] bg-[#F6F1E6] p-4 text-sm text-[#5A6150]">
+          <p className="border border-[#8A3E38] bg-surface-soft p-4 text-sm text-ink-muted">
             {localize('Backend unavailable. Start FastAPI with')}{' '}
-            <code className="text-[#161A12]">uvicorn api.main:app --port 8000</code>{' '}
+            <code className="text-ink">uvicorn api.main:app --port 8000</code>{' '}
             {localize('before analyzing.')}
           </p>
         )}
         {analysisError && (
-          <p className="border border-[#8A3E38] bg-[#F6F1E6] p-4 text-sm text-[#8A3E38]">{analysisError}</p>
+          <p className="border border-[#8A3E38] bg-surface-soft p-4 text-sm text-[#8A3E38]">{analysisError}</p>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {SAMPLE_CROP_IMAGES.map((sample) => {
-            const isSelected = selectedSample?.id === sample.id;
-            return (
-              <button key={sample.id} type="button" onClick={() => handleSelectSample(sample)} className="text-left group">
-                <div className={`relative h-36 overflow-hidden ${isSelected ? 'ring-2 ring-[#1C2A1A] ring-offset-4 ring-offset-[#FBF7EE]' : ''}`}>
-                  <img src={sample.imageUrl} alt={sample.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  {isSelected && (
-                    <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#1C2A1A] text-[#E8D5A3] flex items-center justify-center">
-                      <Check className="w-3.5 h-3.5" />
-                    </span>
-                  )}
-                </div>
-                <span className="mt-2 block font-display text-[#161A12]">{sample.name}</span>
-              </button>
-            );
-          })}
+        <div id="disease-library" className="space-y-4 scroll-mt-28">
+          <div>
+            <p className="text-[11px] tracking-[0.28em] uppercase text-olive">Disease library</p>
+            <p className="text-sm text-ink-muted font-light mt-1">
+              Tap a card to read farmer-friendly information about each example condition.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {DISEASE_LIBRARY.map((disease) => (
+              <DiseaseCard key={disease.id} disease={disease} onOpen={onOpenDisease} />
+            ))}
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -125,7 +114,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
               if (e.dataTransfer.files?.[0]) handleFileChange(e.dataTransfer.files[0]);
             }}
             className={`lg:col-span-7 min-h-[360px] border border-dashed p-8 flex items-center justify-center ${
-              isDragOver ? 'border-[#1C2A1A] bg-[#EFE8D8]' : 'border-[#C9C0A8] bg-[#F6F1E6]'
+              isDragOver ? 'border-[#1C2A1A] bg-[#EFE8D8]' : 'border-[#C9C0A8] bg-surface-soft'
             }`}
           >
             <input
@@ -140,9 +129,9 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
 
             {!previewUrl ? (
               <div className="text-center space-y-5 max-w-md">
-                <Upload className="w-8 h-8 mx-auto text-[#6E7A4E]" />
-                <h3 className="font-display text-3xl text-[#161A12]">{localize('Drop a crop image')}</h3>
-                <p className="text-sm text-[#5A6150] font-light">{localize('JPEG, PNG or WEBP.')}</p>
+                <Upload className="w-8 h-8 mx-auto text-olive" />
+                <h3 className="font-display text-3xl text-ink">{localize('Drop a crop image')}</h3>
+                <p className="text-sm text-ink-muted font-light">{localize('JPEG, PNG or WEBP.')}</p>
                 <button type="button" onClick={() => fileInputRef.current?.click()} className="px-5 py-2 rounded-full bg-[#1C2A1A] text-[#F6F1E6] text-sm">
                   {localize('Browse')}
                 </button>
@@ -209,7 +198,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
             <button
               type="submit"
               disabled={!previewUrl || isAnalyzing || backendConnected === false}
-              className="w-full mt-4 py-3 rounded-full bg-[#E8D5A3] text-[#1C2A1A] font-semibold disabled:opacity-40"
+              className="w-full mt-4 py-3 rounded-full bg-[#E8D5A3] text-ink-strong font-semibold disabled:opacity-40"
             >
               {isAnalyzing ? localize('Analyzing crop…') : localize('Analyze crop health')}
             </button>

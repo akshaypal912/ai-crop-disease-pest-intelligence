@@ -1,5 +1,40 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-surface: #FBF7EE;
+  --color-surface-elevated: #F6F3EC;
+  --color-surface-soft: #F6F1E6;
+  --color-surface-alt: #EBF1EC;
+  --color-ink: #161A12;
+  --color-ink-strong: #1C2A1A;
+  --color-ink-muted: #5A6150;
+  --color-ink-secondary: #43544A;
+  --color-border: #DDD6C4;
+  --color-border-soft: #CFDAD2;
+  --color-panel: #1C2A1A;
+  --color-panel-muted: #4F5A38;
+  --color-cream: #F6F1E6;
+  --color-wheat: #E8D5A3;
+  --color-olive: #6E7A4E;
+}
+
+@layer theme {
+  .dark {
+    --color-surface: #121910;
+    --color-surface-elevated: #1C2A1A;
+    --color-surface-soft: #182218;
+    --color-surface-alt: #151d14;
+    --color-ink: #F6F1E6;
+    --color-ink-strong: #F4E7C0;
+    --color-ink-muted: #A8B0A0;
+    --color-ink-secondary: #9CA89A;
+    --color-border: #3A4A38;
+    --color-border-soft: #2F3D2C;
+  }
+}
+
 @layer base {
   :root {
     --cream: #F6F1E6;
@@ -17,18 +52,23 @@
     --border-soft: #DDD6C4;
   }
 
+  .dark {
+    --cream-warm: #121910;
+    --text-dark: #F6F1E6;
+    --text-muted: #A8B0A0;
+    --border-soft: #3A4A38;
+  }
+
   html {
     scroll-behavior: smooth;
     font-family: 'Outfit', system-ui, sans-serif;
-    background-color: var(--cream-warm);
-    color: var(--text-dark);
+    @apply bg-surface text-ink;
   }
 
   body {
     margin: 0;
     padding: 0;
-    background-color: var(--cream-warm);
-    color: var(--text-dark);
+    @apply bg-surface text-ink;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
@@ -60,11 +100,14 @@
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #F6F1E6;
+  @apply bg-surface-soft;
 }
 ::-webkit-scrollbar-thumb {
   background: #8A936C;
   border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #4F5A38;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #4F5A38;
@@ -73,7 +116,7 @@
 /* AI Crop Assistant Markdown Response Styling */
 .assistant-markdown {
   font-family: 'Outfit', system-ui, sans-serif;
-  color: #1C2A1A;
+  @apply text-ink-strong;
   line-height: 1.65;
   font-size: 0.875rem;
 }
@@ -83,7 +126,7 @@
 .assistant-markdown h3,
 .assistant-markdown h4 {
   font-family: 'Fraunces', Georgia, serif;
-  color: #1C2A1A;
+  @apply text-ink-strong;
   font-weight: 600;
   margin-top: 1.1rem;
   margin-bottom: 0.45rem;
@@ -118,7 +161,7 @@
 }
 
 .assistant-markdown strong {
-  color: #161A12;
+  @apply text-ink;
   font-weight: 600;
 }
 
@@ -147,14 +190,17 @@
 }
 
 .assistant-markdown li::marker {
-  color: #6E7A4E;
+  @apply text-olive;
 }
 
 .assistant-markdown blockquote {
   border-left: 3px solid #C4D4A0;
   padding-left: 0.75rem;
-  color: #5A6150;
+  @apply text-ink-muted;
   margin: 0.6rem 0;
   font-style: italic;
 }
 
+.dark .assistant-markdown blockquote {
+  border-left-color: #4F5A38;
+}

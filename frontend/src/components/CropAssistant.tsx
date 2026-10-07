@@ -178,16 +178,16 @@ export function CropAssistant({ report, sessionId }: CropAssistantProps) {
       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#6E7A4E] via-[#9BAF6A] to-[#C5D48A]" />
 
       {/* Header */}
-      <div className="px-6 sm:px-8 pt-7 pb-5 border-b border-[#DDD6C4]">
+      <div className="px-6 sm:px-8 pt-7 pb-5 border-b border-border">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#6E7A4E] flex items-center justify-center shadow-sm">
             <Sparkles className="w-5 h-5 text-[#E8D5A3]" />
           </div>
           <div>
-            <h2 className="font-display text-xl text-[#1C2A1A] leading-tight">
+            <h2 className="font-display text-xl text-ink-strong leading-tight">
               {localize('AI Crop Assistant')}
             </h2>
-            <p className="text-[11px] tracking-[0.16em] uppercase text-[#6E7A4E] mt-0.5">
+            <p className="text-[11px] tracking-[0.16em] uppercase text-olive mt-0.5">
               {localize('Ask questions about this crop analysis')}
             </p>
           </div>
@@ -237,7 +237,7 @@ export function CropAssistant({ report, sessionId }: CropAssistantProps) {
             disabled={isLoading}
             aria-label="Ask the AI Crop Assistant"
             className={[
-              'flex-1 pl-9 pr-3 py-3 bg-transparent text-sm text-[#1C2A1A] placeholder:text-[#A8A090]',
+              'flex-1 pl-9 pr-3 py-3 bg-transparent text-sm text-ink-strong placeholder:text-[#A8A090]',
               'outline-none rounded-xl font-light',
               'disabled:opacity-50',
             ].join(' ')}
@@ -246,7 +246,7 @@ export function CropAssistant({ report, sessionId }: CropAssistantProps) {
             <button
               onClick={() => setQuestion('')}
               aria-label="Clear question"
-              className="mr-1 p-1 rounded-full text-[#A8A090] hover:text-[#5A6150] transition-colors"
+              className="mr-1 p-1 rounded-full text-[#A8A090] hover:text-ink-muted transition-colors"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -276,12 +276,12 @@ export function CropAssistant({ report, sessionId }: CropAssistantProps) {
       {/* Loading state */}
       {isLoading && (
         <div className="px-6 sm:px-8 pb-6">
-          <div className="rounded-xl bg-white/80 border border-[#DDD6C4] p-5">
+          <div className="rounded-xl bg-white/80 border border-border p-5">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-7 h-7 rounded-full bg-[#6E7A4E] flex items-center justify-center flex-shrink-0">
                 <Sparkles className="w-3.5 h-3.5 text-[#E8D5A3]" />
               </div>
-              <span className="text-xs text-[#6E7A4E] font-medium tracking-wide uppercase">
+              <span className="text-xs text-olive font-medium tracking-wide uppercase">
                 {localize('AI Crop Assistant · Analysing…')}
               </span>
             </div>
@@ -314,13 +314,13 @@ export function CropAssistant({ report, sessionId }: CropAssistantProps) {
       {/* Response card */}
       {response && !isLoading && (
         <div ref={responseRef} className="px-6 sm:px-8 pb-7">
-          <div className="rounded-xl bg-white border border-[#DDD6C4] overflow-hidden shadow-sm">
+          <div className="rounded-xl bg-white border border-border overflow-hidden shadow-sm">
             {/* Card header */}
-            <div className="flex items-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-[#F0EAD8] to-[#F8F5EC] border-b border-[#DDD6C4]">
+            <div className="flex items-center gap-2.5 px-5 py-3.5 bg-gradient-to-r from-[#F0EAD8] to-[#F8F5EC] border-b border-border">
               <div className="w-6 h-6 rounded-full bg-[#6E7A4E] flex items-center justify-center flex-shrink-0">
                 <Sparkles className="w-3 h-3 text-[#E8D5A3]" />
               </div>
-              <span className="text-[11px] tracking-[0.18em] uppercase text-[#5A6150] font-medium">
+              <span className="text-[11px] tracking-[0.18em] uppercase text-ink-muted font-medium">
                 {localize('AI Crop Assistant')}
               </span>
               {!response.grounded && (

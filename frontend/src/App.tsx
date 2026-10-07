@@ -1,4 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { DiseaseDetailPage } from './components/disease/DiseaseDetailPage';
+import { DiseaseNotFound } from './components/disease/DiseaseNotFound';
+import { getDiseaseBySlug } from './data/diseaseLibrary';
+import {
+  diseaseDetailPath,
+  DISEASE_LIBRARY_RETURN_PATH,
+  parsePathname,
+  pathForAppPage,
+} from './utils/diseaseRoutes';
 import { Navbar, type AppPage } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { MissionSection } from './components/MissionSection';
@@ -28,7 +37,14 @@ import type { HealthResponse } from './types/predict';
 
 export function App() {
   const { ingestTranslations } = useFarmerLanguage();
-  const [activePage, setActivePage] = useState<AppPage>('home');
+  const [activePage, setActivePage] = useState<AppPage>(() => {
+    const route = parsePathname(window.location.pathname);
+    return route.type === 'disease-detail' ? 'disease-detail' : route.page;
+  });
+  const [diseaseSlug, setDiseaseSlug] = useState<string | null>(() => {
+    const route = parsePathname(window.location.pathname);
+    return route.type === 'disease-detail' ? route.slug : null;
+  });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentStage, setCurrentStage] = useState(0);
   const [activeSession, setActiveSession] = useState<CropAnalysisSession | null>(null);
@@ -57,9 +73,46 @@ export function App() {
     void ingestTranslations(APP_SHELL_UI_STRINGS);
   }, [ingestTranslations]);
 
+  const applyRouteFromUrl = useCallback(() => {
+    const route = parsePathname(window.location.pathname);
+    if (route.type === 'disease-detail') {
+      setDiseaseSlug(route.slug);
+      setActivePage('disease-detail');
+      return;
+    }
+    setDiseaseSlug(null);
+    setActivePage(route.page);
+  }, []);
+
+  useEffect(() => {
+    const onPopState = () => applyRouteFromUrl();
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [applyRouteFromUrl]);
+
   const goTo = (page: AppPage) => {
     if (page !== 'result') setActiveSession(null);
+    if (page !== 'disease-detail') {
+      setDiseaseSlug(null);
+    }
     setActivePage(page);
+    if (page !== 'disease-detail' && page !== 'result') {
+      window.history.pushState({}, '', pathForAppPage(page));
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const openDiseaseDetail = (slug: string) => {
+    setDiseaseSlug(slug);
+    setActivePage('disease-detail');
+    window.history.pushState({}, '', diseaseDetailPath(slug));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const backToDiseaseLibrary = () => {
+    setDiseaseSlug(null);
+    setActivePage('detect');
+    window.history.pushState({}, '', DISEASE_LIBRARY_RETURN_PATH);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -120,11 +173,14 @@ export function App() {
   };
 
   const backendConnected = Boolean(health) && !healthError;
+  const diseaseEntry = diseaseSlug ? getDiseaseBySlug(diseaseSlug) : undefined;
+  const navbarActivePage: AppPage =
+    activePage === 'disease-detail' ? 'detect' : activePage;
 
   return (
-    <div className="min-h-screen bg-[#FBF7EE] text-[#161A12] selection:bg-[#6E7A4E] selection:text-white">
+    <div className="min-h-screen bg-surface text-ink selection:bg-[#6E7A4E] selection:text-white">
       <Navbar
-        activePage={activePage}
+        activePage={navbarActivePage}
         onNavigate={goTo}
         overlay={activePage === 'home'}
         backendConnected={backendConnected}
@@ -150,7 +206,22 @@ export function App() {
             isAnalyzing={isAnalyzing}
             analysisError={analysisError}
             backendConnected={backendConnected}
+            onOpenDisease={openDiseaseDetail}
           />
+        </main>
+      )}
+
+      {activePage === 'disease-detail' && (
+        <main>
+          {diseaseEntry ? (
+            <DiseaseDetailPage
+              disease={diseaseEntry}
+              onBack={backToDiseaseLibrary}
+              onAnalyze={() => goTo('detect')}
+            />
+          ) : (
+            <DiseaseNotFound onBack={backToDiseaseLibrary} />
+          )}
         </main>
       )}
 

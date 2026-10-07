@@ -33,7 +33,7 @@ export interface ProgressStage {
 }
 
 export const ANALYSIS_STAGES: ProgressStage[] = [
-  { stage: 1, title: 'Uploading image', description: 'Sending your photo to the CropSense API' },
+  { stage: 1, title: 'Uploading image', description: 'Sending your photo to the FarmEye AI analysis service' },
   { stage: 2, title: 'Running visual assessment', description: 'Optional AI visual assessment (Phase 1)' },
   { stage: 3, title: 'Running validated specialists', description: 'Specialist router and tomato disease model when allowed' },
   { stage: 4, title: 'Checking pests', description: 'Pest24 YOLO detection (independent of disease routing)' },

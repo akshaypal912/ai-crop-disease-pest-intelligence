@@ -24,9 +24,9 @@ export function ReportPestCard({
 
   return (
 
-    <article className="border-t border-[#DDD6C4] pt-8 space-y-4">
+    <article className="border-t border-border pt-8 space-y-4">
 
-      <p className="text-[11px] tracking-[0.28em] uppercase text-[#6E7A4E]">
+      <p className="text-[11px] tracking-[0.28em] uppercase text-olive">
 
         {localize('Pest detection (Pest24 YOLO)')}
 
@@ -34,7 +34,7 @@ export function ReportPestCard({
 
       {pests.length === 0 ? (
 
-        <p className="font-display text-xl text-[#161A12]">
+        <p className="font-display text-xl text-ink">
 
           {localize('No supported pest instances detected in this image.')}
 
@@ -46,9 +46,9 @@ export function ReportPestCard({
 
           {pests.map((p, i) => (
 
-            <li key={`${p.pest}-${i}`} className="text-sm text-[#5A6150]">
+            <li key={`${p.pest}-${i}`} className="text-sm text-ink-muted">
 
-              <strong className="text-[#161A12]">{p.pest}</strong> — {localize('detection confidence')}{' '}
+              <strong className="text-ink">{p.pest}</strong> — {localize('detection confidence')}{' '}
 
               {(p.confidence * 100).toFixed(1)}% · box [{p.bounding_box.join(', ')}]
 
@@ -64,11 +64,11 @@ export function ReportPestCard({
 
         <div className="space-y-2 pt-2">
 
-          <p className="text-sm font-medium text-[#161A12]">{localize('IPM guidance bundles')}</p>
+          <p className="text-sm font-medium text-ink">{localize('IPM guidance bundles')}</p>
 
           {pestRecommendations.map((b) => (
 
-            <p key={b.pest} className="text-sm text-[#5A6150] font-light">
+            <p key={b.pest} className="text-sm text-ink-muted font-light">
 
               {b.pest} · {localize(b.recommendation_status)} · tier {localize(b.detection_confidence_label)}
 

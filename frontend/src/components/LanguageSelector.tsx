@@ -20,7 +20,7 @@ export function LanguageSelector({ overHero }: LanguageSelectorProps) {
         Language
       </label>
       <Globe
-        className={`w-4 h-4 flex-shrink-0 ${overHero ? 'text-white/90' : 'text-[#5A6150]'}`}
+        className={`w-4 h-4 flex-shrink-0 ${overHero ? 'text-white/90' : 'text-ink-muted'}`}
         aria-hidden
       />
       <select
@@ -33,7 +33,7 @@ export function LanguageSelector({ overHero }: LanguageSelectorProps) {
           'cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#6E7A4E]/50',
           overHero
             ? 'bg-white/10 border-white/30 text-white'
-            : 'bg-white border-[#DDD6C4] text-[#1C2A1A]',
+            : 'bg-surface-elevated border-border text-ink-strong',
         ].join(' ')}
       >
         {languages.map((opt) => (

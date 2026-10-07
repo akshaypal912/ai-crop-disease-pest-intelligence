@@ -19,7 +19,7 @@ export const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ currentStage
         <img src={IMAGES.leaves} alt="" className="w-full h-32 object-cover opacity-70" />
         <div className="p-7 space-y-6">
           <div>
-            <p className="text-[11px] tracking-[0.28em] uppercase text-[#E8D5A3] mb-2">Reading the crop</p>
+            <p className="text-[11px] tracking-[0.28em] uppercase text-[#E8D5A3] mb-2">FarmEye AI</p>
             <h3 className="font-display text-3xl">Listening to the leaf…</h3>
           </div>
 

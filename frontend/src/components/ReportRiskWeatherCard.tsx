@@ -26,9 +26,9 @@ export function ReportRiskWeatherCard({ report }: { report: PredictionResponse }
 
   return (
 
-    <article className="border-t border-[#DDD6C4] pt-8 space-y-6">
+    <article className="border-t border-border pt-8 space-y-6">
 
-      <p className="text-[11px] tracking-[0.28em] uppercase text-[#6E7A4E]">
+      <p className="text-[11px] tracking-[0.28em] uppercase text-olive">
 
         {localize('Weather & risk')}
 
@@ -74,7 +74,7 @@ export function ReportRiskWeatherCard({ report }: { report: PredictionResponse }
 
       ) : (
 
-        <p className="text-[#5A6150] font-light">
+        <p className="text-ink-muted font-light">
 
           {localize('Weather data unavailable for this request.')}
 
@@ -84,11 +84,11 @@ export function ReportRiskWeatherCard({ report }: { report: PredictionResponse }
 
       <div>
 
-        <h3 className="font-display text-2xl text-[#161A12]">{riskHeadline}</h3>
+        <h3 className="font-display text-2xl text-ink">{riskHeadline}</h3>
 
         {!insufficient && risk.risk_score != null && (
 
-          <p className="text-sm text-[#5A6150] mt-1">
+          <p className="text-sm text-ink-muted mt-1">
 
             {localize('Score:')} {risk.risk_score.toFixed(2)} / 1.00
 
@@ -98,13 +98,13 @@ export function ReportRiskWeatherCard({ report }: { report: PredictionResponse }
 
         {insufficient && (
 
-          <p className="text-sm text-[#5A6150] mt-1">{localize('Risk score: Unavailable')}</p>
+          <p className="text-sm text-ink-muted mt-1">{localize('Risk score: Unavailable')}</p>
 
         )}
 
         {risk.factors?.length > 0 && (
 
-          <ul className="mt-3 space-y-1 text-sm text-[#5A6150] font-light">
+          <ul className="mt-3 space-y-1 text-sm text-ink-muted font-light">
 
             {risk.factors.map((f) => (
 
@@ -116,7 +116,7 @@ export function ReportRiskWeatherCard({ report }: { report: PredictionResponse }
 
         )}
 
-        {risk.message && <p className="text-sm text-[#5A6150] mt-2">{localize(risk.message)}</p>}
+        {risk.message && <p className="text-sm text-ink-muted mt-2">{localize(risk.message)}</p>}
 
       </div>
 
@@ -134,7 +134,7 @@ function Metric({ label, value }: { label: string; value: string }) {
 
     <div>
 
-      <p className="text-[11px] uppercase tracking-widest text-[#6E7A4E]">{label}</p>
+      <p className="text-[11px] uppercase tracking-widest text-olive">{label}</p>
 
       <p className="font-display text-lg mt-1">{value}</p>
 

@@ -22,11 +22,11 @@ export const DashboardSection: React.FC<DashboardSectionProps> = ({
   ).length;
 
   return (
-    <div className="bg-[#FBF7EE] min-h-screen">
+    <div className="bg-surface min-h-screen">
       <PageBanner
         kicker="Dashboard"
         title="The season, at a glance"
-        subtitle="Summaries from live backend analyses in this browser."
+        subtitle="FarmEye AI summaries from live backend analyses in this browser."
         image={IMAGES.farmland}
       />
 
@@ -43,13 +43,13 @@ export const DashboardSection: React.FC<DashboardSectionProps> = ({
           <button
             type="button"
             onClick={() => onOpenResult(latest)}
-            className="text-left border-t border-[#DDD6C4] pt-8 w-full"
+            className="text-left border-t border-border pt-8 w-full"
           >
-            <p className="text-[11px] tracking-[0.28em] uppercase text-[#6E7A4E]">Latest reading</p>
-            <h2 className="font-display text-4xl text-[#161A12] mt-2">{sessionDiagnosisTitle(latest)}</h2>
+            <p className="text-[11px] tracking-[0.28em] uppercase text-olive">Latest reading</p>
+            <h2 className="font-display text-4xl text-ink mt-2">{sessionDiagnosisTitle(latest)}</h2>
           </button>
         ) : (
-          <p className="text-[#5A6150] font-light">No analyses yet.</p>
+          <p className="text-ink-muted font-light">No analyses yet.</p>
         )}
         <button
           type="button"

@@ -54,7 +54,7 @@ export const Capabilities: React.FC = () => {
   ];
 
   return (
-    <section id="capabilities" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#EBF1EC] bg-organic-texture border-b border-[#CFDAD2]">
+    <section id="capabilities" className="py-20 px-4 sm:px-6 lg:px-8 bg-surface-alt bg-organic-texture border-b border-border-soft">
       <div className="max-w-7xl mx-auto space-y-12">
         
         {/* Section Header */}
@@ -65,7 +65,7 @@ export const Capabilities: React.FC = () => {
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F3322] tracking-tight">
             Built for Precision Agronomy & Reliable AI
           </h2>
-          <p className="text-base text-[#43544A] font-medium">
+          <p className="text-base text-ink-secondary font-medium">
             Every feature is grounded in explainable machine learning and agricultural best practices. No black-box scores or fabricated predictions.
           </p>
         </div>
@@ -77,14 +77,14 @@ export const Capabilities: React.FC = () => {
             return (
               <div
                 key={cap.title}
-                className="p-6 rounded-2xl bg-white border border-[#CFDAD2] hover:border-[#0F3322] hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                className="p-6 rounded-2xl bg-white border border-border-soft hover:border-[#0F3322] hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="w-10 h-10 rounded-xl bg-[#0F3322] text-[#10B981] flex items-center justify-center group-hover:bg-[#16462D] group-hover:text-[#E5C378] transition-colors border border-[#16462D]">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#F6F3EC] text-[#0F3322] border border-[#CFDAD2]">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-surface-elevated text-[#0F3322] border border-border-soft">
                       {cap.tag}
                     </span>
                   </div>
@@ -92,7 +92,7 @@ export const Capabilities: React.FC = () => {
                   <h3 className="text-base font-extrabold text-[#0F3322] leading-snug">
                     {cap.title}
                   </h3>
-                  <p className="text-xs text-[#43544A] leading-relaxed font-medium">
+                  <p className="text-xs text-ink-secondary leading-relaxed font-medium">
                     {cap.description}
                   </p>
                 </div>

@@ -14,7 +14,7 @@ export function ReportAlertBanner({ alert }: { alert: AlertResult }) {
 
     return (
 
-      <p className="text-sm text-[#5A6150] font-light border border-[#DDD6C4] p-4">
+      <p className="text-sm text-ink-muted font-light border border-border p-4">
 
         {localize('No active high-risk alert for this analysis.')}
 
@@ -26,7 +26,7 @@ export function ReportAlertBanner({ alert }: { alert: AlertResult }) {
 
   return (
 
-    <div className="border border-[#8A3E38] bg-[#F6F1E6] p-4 space-y-2">
+    <div className="border border-[#8A3E38] bg-surface-soft p-4 space-y-2">
 
       <p className="font-display text-xl text-[#8A3E38]">
 
@@ -34,7 +34,7 @@ export function ReportAlertBanner({ alert }: { alert: AlertResult }) {
 
       </p>
 
-      <ul className="list-disc pl-5 text-sm text-[#5A6150]">
+      <ul className="list-disc pl-5 text-sm text-ink-muted">
 
         {alert.reasons.map((r) => (
 
