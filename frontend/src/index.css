@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-surface: #FBF7EE;
+  --color-surface-elevated: #F6F3EC;
+  --color-surface-soft: #F6F1E6;
+  --color-surface-alt: #EBF1EC;
+  --color-ink: #161A12;
+  --color-ink-strong: #1C2A1A;
+  --color-ink-muted: #5A6150;
+  --color-ink-secondary: #43544A;
+  --color-border: #DDD6C4;
+  --color-border-soft: #CFDAD2;
+  --color-panel: #1C2A1A;
+  --color-panel-muted: #4F5A38;
+  --color-cream: #F6F1E6;
+  --color-wheat: #E8D5A3;
+  --color-olive: #6E7A4E;
+}
+
+@layer theme {
+  .dark {
+    --color-surface: #121910;
+    --color-surface-elevated: #1C2A1A;
+    --color-surface-soft: #182218;
+    --color-surface-alt: #151d14;
+    --color-ink: #F6F1E6;
+    --color-ink-strong: #F4E7C0;
+    --color-ink-muted: #A8B0A0;
+    --color-ink-secondary: #9CA89A;
+    --color-border: #3A4A38;
+    --color-border-soft: #2F3D2C;
+  }
+}
+
+@layer base {
+  :root {
+    --cream: #F6F1E6;
+    --cream-warm: #FBF7EE;
+    --olive: #6E7A4E;
+    --olive-deep: #4F5A38;
+    --olive-muted: #8A936C;
+    --forest: #1C2A1A;
+    --forest-ink: #121910;
+    --wheat: #D4B56A;
+    --wheat-soft: #E8D5A3;
+    --soil: #3D2E22;
+    --text-dark: #161A12;
+    --text-muted: #5A6150;
+    --border-soft: #DDD6C4;
+  }
+
+  .dark {
+    --cream-warm: #121910;
+    --text-dark: #F6F1E6;
+    --text-muted: #A8B0A0;
+    --border-soft: #3A4A38;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Outfit', system-ui, sans-serif;
+    @apply bg-surface text-ink;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    @apply bg-surface text-ink;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: 'Fraunces', Georgia, serif;
+  }
+}
+
+.font-display {
+  font-family: 'Fraunces', Georgia, serif;
+}
+
+.font-body {
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float-subtle 5s ease-in-out infinite;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-surface-soft;
+}
+::-webkit-scrollbar-thumb {
+  background: #8A936C;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #4F5A38;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4F5A38;
+}
+
+/* AI Crop Assistant Markdown Response Styling */
+.assistant-markdown {
+  font-family: 'Outfit', system-ui, sans-serif;
+  @apply text-ink-strong;
+  line-height: 1.65;
+  font-size: 0.875rem;
+}
+
+.assistant-markdown h1,
+.assistant-markdown h2,
+.assistant-markdown h3,
+.assistant-markdown h4 {
+  font-family: 'Fraunces', Georgia, serif;
+  @apply text-ink-strong;
+  font-weight: 600;
+  margin-top: 1.1rem;
+  margin-bottom: 0.45rem;
+  line-height: 1.3;
+}
+
+.assistant-markdown h1:first-child,
+.assistant-markdown h2:first-child,
+.assistant-markdown h3:first-child {
+  margin-top: 0;
+}
+
+.assistant-markdown h1 {
+  font-size: 1.15rem;
+}
+
+.assistant-markdown h2 {
+  font-size: 1.05rem;
+}
+
+.assistant-markdown h3 {
+  font-size: 0.95rem;
+}
+
+.assistant-markdown p {
+  margin-top: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.assistant-markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.assistant-markdown strong {
+  @apply text-ink;
+  font-weight: 600;
+}
+
+.assistant-markdown em {
+  font-style: italic;
+}
+
+.assistant-markdown ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.assistant-markdown ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin-top: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.assistant-markdown li {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  padding-left: 0.2rem;
+}
+
+.assistant-markdown li::marker {
+  @apply text-olive;
+}
+
+.assistant-markdown blockquote {
+  border-left: 3px solid #C4D4A0;
+  padding-left: 0.75rem;
+  @apply text-ink-muted;
+  margin: 0.6rem 0;
+  font-style: italic;
+}
+
+.dark .assistant-markdown blockquote {
+  border-left-color: #4F5A38;
+}
